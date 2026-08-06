@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@theme {
+    /* 🎨 COLORES BASE (se sobreescriben según el tema) */
+    --bg-1: #FFFFFF;
+    --bg-2: #F6F6F8;
+    --bg-3: #FFFFFF;
+
+    --btn-1: #4A90E2;
+    --btn-2: #F4F7F9;
+
+    --text-1: #111827;
+    --text-2: #6B7280;
+
+    --border-1: #E2E8F0;
+
+    /* Prioridades (no cambian) */
+    --priority-low-1: #1450C8;
+    --priority-medium-1: #F5A623;
+    --priority-high-1: #D0021B;
+
+    /* ❌ ERRORES */
+    --error-1: #DC2626;
+    /* Texto de error / borde de input */
+    --error-bg: #FEF2F2;
+    /* Fondo de mensaje de error */
+
+}
+
+/* 🌙 DARK MODE */
+.dark {
+    --bg-1: #101622;
+    --bg-2: #1A2336;
+    --bg-3: #1C2639;
+
+    --btn-1: #135BEC;
+    --btn-2: #232F48;
+
+    --text-1: #FFFFFF;
+    --text-2: #CBD5E1;
+
+
+    --border-1: #324467;
+
+    /* ❌ ERRORES */
+    --error-1: #F87171;
+    /* Más suave para dark mode */
+    --error-bg: #2D1A1F;
+    /* Fondo oscuro con tinte rojo */
+}
+
+/* 📜 CUSTOM SCROLLBAR */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--text-2);
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--btn-1);
+}
+
+/* FONTS */
+body {
+    font-family: 'Supreme', sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
