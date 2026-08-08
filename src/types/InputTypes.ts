@@ -3,7 +3,7 @@ export interface InputProps {
     placeholder?: string;
     label?: string;
     icon?: React.ReactNode;
-    id: string;
+    className?: string;
     error?: string;
-    register?: any;
+    register?: Record<string, unknown>;
 }
