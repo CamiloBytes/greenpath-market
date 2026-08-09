@@ -23,7 +23,7 @@ const LOGIN_IMG =
 const REGISTER_IMG =
   "https://res.cloudinary.com/dd7vy0y6n/image/upload/f_auto,q_auto/v1755644601/back-register_uiimdr.jpg";
 
-export const AuthPage = () => {
+const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   const handleToggle = () => setIsLogin((prev) => !prev);
@@ -74,3 +74,5 @@ export const AuthPage = () => {
     </main>
   );
 };
+
+export default AuthPage;

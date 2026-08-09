@@ -33,8 +33,8 @@ const categories = [
 export const CategorySection = () => {
   return (
     <section className="flex flex-col ">
-      <div className="flex flex-col items-start justify-start gap-4 ">
-        <h1 className="text-3xl font-bold text-center text-white">
+      <div className="flex flex-col items-start justify-center pt-6 gap-4 ">
+        <h1 className="text-3xl font-bold text-center tracking-wider text-white">
           Categories
         </h1>
       </div>

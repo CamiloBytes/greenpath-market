@@ -1,4 +1,5 @@
-import { Navbar } from "@/src/components/ui/Navbar";
+
+import { Navbar } from "@/src/components/feature/Navbar";
 import Image from "next/image";
 
 export default function DashboardLayout({

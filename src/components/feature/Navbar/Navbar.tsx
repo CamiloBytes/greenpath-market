@@ -5,7 +5,8 @@ import { MdLocalOffer } from "react-icons/md";
 import { FaShop } from "react-icons/fa6";
 import { GiGreenhouse } from "react-icons/gi";
 import Link from "next/link";
-import { SearchInput } from "../Input";
+import { SearchInput } from "../../ui/Input";
+
 
 const iconButton = "text-2xl text-white/90 hover:text-[#1DD317] transition-colors duration-200";
 
