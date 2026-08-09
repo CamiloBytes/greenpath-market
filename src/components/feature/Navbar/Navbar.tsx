@@ -13,34 +13,36 @@ const iconButton = "text-2xl text-white/90 hover:text-[#1DD317] transition-color
 export const Navbar = () => {
   return (
     <header className="fixed top-0 inset-x-0 z-50">
-      <nav className="h-16 px-7 flex items-center justify-between bg-gradient-to-r from-[#07110C]/80 via-[#07110C]/65 to-[#0A1A12]/70 backdrop-blur-md">
-        <Link href="/" className="flex items-center gap-2 text-white">
-          <GiGreenhouse className="text-3xl text-[#1DD317]" />
-          <span className="text-xl font-bold tracking-tight">GreenPath</span>
-        </Link>
+      <nav className="bg-gradient-to-r from-[#07110C]/80 via-[#07110C]/65 to-[#0A1A12]/70 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between ">
+          <Link href="/" className="flex items-center gap-2 text-white">
+            <GiGreenhouse className="text-3xl text-[#1DD317]" />
+            <span className="text-xl font-bold tracking-tight">GreenPath</span>
+          </Link>
 
-        <div className="flex items-center gap-5">
-          <button type="button" aria-label="Personas" className={iconButton}>
-            <IoMdPerson />
-          </button>
-          <button type="button" aria-label="Tienda" className={iconButton}>
-            <FaShop />
-          </button>
-          <button type="button" aria-label="Carrito" className={iconButton}>
-            <FiShoppingCart />
-          </button>
-          <button type="button" aria-label="Ofertas" className={iconButton}>
-            <MdLocalOffer />
-          </button>
-          <button type="button" aria-label="Perfil" className={iconButton}>
-            <IoMdPerson />
-          </button>
+          <div className="flex items-center gap-5">
+            <button type="button" aria-label="Personas" className={iconButton}>
+              <IoMdPerson />
+            </button>
+            <button type="button" aria-label="Tienda" className={iconButton}>
+              <FaShop />
+            </button>
+            <button type="button" aria-label="Carrito" className={iconButton}>
+              <FiShoppingCart />
+            </button>
+            <button type="button" aria-label="Ofertas" className={iconButton}>
+              <MdLocalOffer />
+            </button>
+            <button type="button" aria-label="Perfil" className={iconButton}>
+              <IoMdPerson />
+            </button>
 
-          <SearchInput className="!w-64" />
+            <SearchInput className="!w-64" />
 
-          <button type="button" aria-label="Salir" className={iconButton}>
-            <FiLogOut />
-          </button>
+            <button type="button" aria-label="Salir" className={iconButton}>
+              <FiLogOut />
+            </button>
+          </div>
         </div>
       </nav>
     </header>
