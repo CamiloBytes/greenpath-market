@@ -2,12 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-
-interface CardCategoryProps {
-  imageUrl: string;
-  title: string;
-  onClick?: () => void;
-}
+import type { CardCategoryProps } from "@/src/types/CardsTypes";
 
 export const CardCategory = ({
   imageUrl,

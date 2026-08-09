@@ -1,6 +1,8 @@
 
-import BannerCarousel from "@/src/components/feature/carousel/BanerCarouse";
-import { CategorySection } from "@/src/components/feature/CategorySection/CategorySection";
+
+import BannerCarousel from "@/src/components/feature/BannerCarousel";
+import { CategorySection } from "@/src/components/feature/CategorySection";
+import { ProductSection } from "@/src/components/feature/ProductSection";
 
 
 
@@ -11,6 +13,8 @@ export default function DashboardPage() {
         <BannerCarousel />
 
         <CategorySection />
+
+        <ProductSection />
       </div>
     </main>
   );
