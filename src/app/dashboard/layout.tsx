@@ -1,4 +1,5 @@
 
+import { FooterSection } from "@/src/components/feature/Footer";
 import { Navbar } from "@/src/components/feature/Navbar";
 import Image from "next/image";
 
@@ -27,6 +28,7 @@ export default function DashboardLayout({
         <Navbar />
 
         <main className="py-20">{children}</main>
+        <FooterSection />
       </div>
     </div>
   );

@@ -2,12 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import type { Product } from "@/src/types/ProductTypes";
-
-interface ProductCardProps {
-  product: Product;
-  onAddToCart?: (product: Product) => void;
-}
+import type { ProductCardProps } from "@/src/types/CardsTypes";
 
 export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const handleAddToCart = (e: React.MouseEvent) => {
