@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "react-hook-form-zod": {
+      "source": "ovachiever/droid-tings",
+      "sourceType": "github",
+      "skillPath": "skills/react-hook-form-zod/SKILL.md",
+      "computedHash": "ae74aa8ed25ec6e82aa30d00b4865fa5cff76c65f1b43ff1169eb2a222740e01"
+    }
+  }
+}

@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
 ,     "src/components/form/.tsx"  ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".agents"]
 }

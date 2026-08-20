@@ -26,6 +26,7 @@ export const Input = ({
         type={type}
         placeholder={placeholder ?? " "}
         {...register}
+        aria-invalid={error ? "true" : "false"}
         className={className + `
           peer
           w-full

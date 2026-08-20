@@ -37,7 +37,7 @@ const AuthPage = () => {
       >
         <div className="absolute inset-0 flex overflow-y-auto custom-scrollbar">
           <div className="m-auto flex items-center justify-center w-full px-6 py-12">
-            {isLogin ? <LoginForm /> : <RegisterForm />}
+            {isLogin ? <LoginForm /> : <RegisterForm onSuccess={handleToggle} />}
           </div>
         </div>
 
