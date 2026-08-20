@@ -39,7 +39,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
             {product.stock} L
           </h3>
           <h3 className="rounded-[10px] bg-white/10 px-2.5 py-0.5 text-sm font-bold text-gray-200 backdrop-blur-sm">
-            ${product.price.toLocaleString()}
+            ${product.price.toLocaleString("es-CO")}
           </h3>
         </div>
 
