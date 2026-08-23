@@ -68,7 +68,7 @@
 
 /* FONTS */
 body {
-    font-family: 'Supreme', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 html {
@@ -89,4 +89,53 @@ html {
 
 .animate-swipe {
     animation: swipe 1s infinite alternate;
+}
+
+/* 🎨 COLOR FLOW (gradiente de texto animado del hero) */
+@keyframes colorFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-color-flow {
+    background-size: 200% 200%;
+    animation: colorFlow 6s ease infinite;
+}
+
+/* 🍞 TOAST SLIDE */
+@keyframes toast-in {
+    from {
+        transform: translateX(110%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toast-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(110%);
+        opacity: 0;
+    }
+}
+
+.animate-toast-in {
+    animation: toast-in 0.35s ease-out forwards;
+}
+
+.animate-toast-out {
+    animation: toast-out 0.35s ease-in forwards;
 }

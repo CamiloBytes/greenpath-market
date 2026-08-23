@@ -19,7 +19,7 @@ export const registerSchema = z
     idDocumentType: z.string().min(1, { message: "Select an ID type" }),
     birthdate: z.string().min(1, { message: "Date of birth is required" }),
     documentNumber: z.string().min(1, { message: "ID number is required" }),
-    roleId: z.string().min(1, { message: "Select a role" }),
+    roleId: z.string().optional(),
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters" }),

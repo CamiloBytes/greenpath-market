@@ -1,9 +1,22 @@
+import {
+  LandingHeader,
+  LandingBackground,
+  HeroSection,
+  AboutSection,
+  ContactSection,
+} from "@/src/components/landing";
+
 export default function HomePage() {
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-white">
-        Welcome to the Home Page
-      </h1>
-    </div>
+    <main className="relative min-h-screen overflow-x-hidden text-white">
+      <LandingBackground />
+
+      <div className="relative z-10">
+        <LandingHeader />
+        <HeroSection />
+        <AboutSection />
+        <ContactSection />
+      </div>
+    </main>
   );
 }

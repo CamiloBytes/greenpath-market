@@ -8,3 +8,12 @@ export interface Product {
   id_category?: number;
   product_description?: string;
 }
+
+export interface ProductFormData {
+  name_product: string;
+  stock: number;
+  price: number;
+  product_description: string;
+  id_category: number;
+  imageFile: File | null;
+}
