@@ -32,7 +32,6 @@ export interface RegisterFormPayload {
   idDocumentType: string;
   documentNumber: string;
   password: string;
-  roleId: string;
   address: string;
 }
 
@@ -44,7 +43,6 @@ export interface RegisterApiPayload {
   id_document_type: number;
   document_number: string;
   user_password: string;
-  id_rol: number;
   user_address: string;
 }
 
@@ -57,7 +55,6 @@ export function toRegisterApiPayload(data: RegisterFormPayload): RegisterApiPayl
     id_document_type: Number(data.idDocumentType),
     document_number: data.documentNumber,
     user_password: data.password,
-    id_rol: Number(data.roleId || "1"),
     user_address: data.address,
   };
 }
@@ -70,16 +67,52 @@ export async function loginUser(email: string, password: string): Promise<LoginR
   });
 }
 
+export interface VerifyPayload {
+  email: string;
+  code: string;
+}
+
+export interface VerifyResponse {
+  id_user: number;
+  full_name: string;
+  email: string;
+  role_id?: number;
+  access_token?: string;
+  message: string;
+}
+
 export async function registerUser(data: RegisterFormPayload) {
-  return apiRequest("/register/", {
+  return apiRequest<{ message: string; email: string }>("/register/", {
     method: "POST",
     auth: false,
     body: toRegisterApiPayload(data),
   });
 }
 
+export async function verifyUser(data: VerifyPayload): Promise<VerifyResponse> {
+  return apiRequest<VerifyResponse>("/register/verify", {
+    method: "POST",
+    auth: false,
+    body: data,
+  });
+}
+
 export async function getProfile(): Promise<UserProfile> {
   return apiRequest<UserProfile>("/users/me/profile");
+}
+
+export type UpdateUserPayload = Partial<
+  Pick<UserProfile, "full_name" | "email" | "user_address">
+>;
+
+export async function updateUser(
+  id: number,
+  data: UpdateUserPayload
+): Promise<UserProfile> {
+  return apiRequest<UserProfile>(`/users/${id}`, {
+    method: "PUT",
+    body: data,
+  });
 }
 
 export function decodeToken(token: string) {

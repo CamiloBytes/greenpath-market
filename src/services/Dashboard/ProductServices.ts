@@ -22,9 +22,17 @@ export async function getProducts({
     limit: String(limit),
   });
 
-  return apiRequest<Product[]>(`/products/?${query.toString()}`, {
+  const data = await apiRequest<unknown>(`/products/?${query.toString()}`, {
     auth: false,
   });
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    if (Array.isArray(obj.detail)) return obj.detail as Product[];
+    if (Array.isArray(obj.items)) return obj.items as Product[];
+    if (Array.isArray(obj.data)) return obj.data as Product[];
+  }
+  return [];
 }
 
 export async function searchProducts({
@@ -39,7 +47,86 @@ export async function searchProducts({
   if (minPrice !== undefined) params.set("min_price", String(minPrice));
   if (maxPrice !== undefined) params.set("max_price", String(maxPrice));
 
-  return apiRequest<Product[]>(`/search/?${params.toString()}`, {
+  const data = await apiRequest<unknown>(`/search/?${params.toString()}`, {
     auth: false,
+  });
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    if (Array.isArray(obj.detail)) return obj.detail as Product[];
+    if (Array.isArray(obj.items)) return obj.items as Product[];
+    if (Array.isArray(obj.data)) return obj.data as Product[];
+  }
+  return [];
+}
+
+export interface CreateProductPayload {
+  name_product: string;
+  stock: number;
+  price: number;
+  product_description: string;
+  id_shop: number;
+  image_url?: string;
+  product_star_rate: number;
+  id_category: number;
+}
+
+export interface UpdateProductPayload {
+  name_product: string;
+  stock: number;
+  price: number;
+  product_description: string;
+  id_shop: number;
+  product_star_rate: number;
+  id_category: number;
+}
+
+export async function getShopProducts(shopId: number): Promise<Product[]> {
+  const data = await apiRequest<unknown>(`/products/shop/${shopId}`);
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    if (Array.isArray(obj.detail)) return obj.detail as Product[];
+    if (Array.isArray(obj.items)) return obj.items as Product[];
+    if (Array.isArray(obj.data)) return obj.data as Product[];
+  }
+  return [];
+}
+
+export async function getProductById(id: number): Promise<Product> {
+  return apiRequest<Product>(`/products/${id}`);
+}
+
+export async function createProduct(
+  data: CreateProductPayload
+): Promise<Product> {
+  return apiRequest<Product>("/products", {
+    method: "POST",
+    body: data,
+  });
+}
+
+export async function createProductWithImage(
+  formData: FormData
+): Promise<Product> {
+  return apiRequest<Product>("/products/upload", {
+    method: "POST",
+    formData,
+  });
+}
+
+export async function updateProduct(
+  id: number,
+  data: UpdateProductPayload
+): Promise<Product> {
+  return apiRequest<Product>(`/products/${id}`, {
+    method: "PUT",
+    body: data,
+  });
+}
+
+export async function deleteProduct(id: number): Promise<void> {
+  return apiRequest<void>(`/products/${id}`, {
+    method: "DELETE",
   });
 }

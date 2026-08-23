@@ -11,9 +11,9 @@ export default function DashboardLayout({
 }) {
   return (
     <RequireAuth>
-      <div className="relative min-h-screen overflow-hidden">
+      <div className="relative min-h-screen">
         {/* Fondo */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 overflow-hidden">
           <Image
             src="/bg.jpg"
             alt=""
@@ -21,15 +21,13 @@ export default function DashboardLayout({
             priority
             className="scale-105 object-cover blur-lg"
           />
-
           <div className="absolute inset-0 bg-black/20" />
         </div>
 
         {/* Contenido */}
-        <div className="relative z-10 min-h-screen">
+        <div className="relative z-10 flex min-h-screen flex-col">
           <Navbar />
-
-          <main className="py-20">{children}</main>
+          <main className="flex-1 pt-20">{children}</main>
           <FooterSection />
         </div>
       </div>

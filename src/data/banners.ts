@@ -53,6 +53,7 @@ export const banners: Banner[] = [
   {
     id: 2,
     badge: "Ofertas especiales",
+    image: "/CARNE.jpg",
     title: "Hasta 50% de descuento esta semana",
     description:
       "Aprovecha las promociones del mercado y ahorra mientras comes más saludable.",

@@ -18,10 +18,10 @@ const IMAGE_TRANSITION: Transition = {
 };
 
 const LOGIN_IMG =
-  "https://res.cloudinary.com/dd7vy0y6n/image/upload/f_auto,q_auto/v1755644602/back-login_vtle9y.jpg";
+  "/fondologin.jpg";
 
 const REGISTER_IMG =
-  "https://res.cloudinary.com/dd7vy0y6n/image/upload/f_auto,q_auto/v1755644601/back-register_uiimdr.jpg";
+  "/fondoregister.jpg";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -37,7 +37,7 @@ const AuthPage = () => {
       >
         <div className="absolute inset-0 flex overflow-y-auto custom-scrollbar">
           <div className="m-auto flex items-center justify-center w-full px-6 py-12">
-            {isLogin ? <LoginForm /> : <RegisterForm onSuccess={handleToggle} />}
+            {isLogin ? <LoginForm /> : <RegisterForm />}
           </div>
         </div>
 
