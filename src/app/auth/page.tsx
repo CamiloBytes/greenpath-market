@@ -18,10 +18,10 @@ const IMAGE_TRANSITION: Transition = {
 };
 
 const LOGIN_IMG =
-  "https://res.cloudinary.com/dd7vy0y6n/image/upload/f_auto,q_auto/v1755644602/back-login_vtle9y.jpg";
+  "/fondologin.jpg";
 
 const REGISTER_IMG =
-  "https://res.cloudinary.com/dd7vy0y6n/image/upload/f_auto,q_auto/v1755644601/back-register_uiimdr.jpg";
+  "/fondoregister.jpg";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
