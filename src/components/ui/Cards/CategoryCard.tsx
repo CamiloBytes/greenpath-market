@@ -8,6 +8,7 @@ export const CardCategory = ({
   imageUrl,
   title,
   onClick,
+  active = false,
 }: CardCategoryProps) => {
   return (
     <motion.div
@@ -19,7 +20,9 @@ export const CardCategory = ({
         stiffness: 300,
         damping: 20,
       }}
-      className="group relative aspect-square w-full max-w-[240px] cursor-pointer overflow-hidden rounded-[28px]"
+      className={`group relative aspect-square w-full max-w-[240px] cursor-pointer overflow-hidden rounded-[28px] ${
+        active ? "ring-4 ring-[#1DD317]" : ""
+      }`}
     >
       {/* Imagen */}
       <Image

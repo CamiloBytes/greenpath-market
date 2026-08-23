@@ -1,3 +1,5 @@
+import type { UseFormRegisterReturn } from "react-hook-form";
+
 export interface InputProps {
     type: string;
     placeholder?: string;
@@ -5,5 +7,5 @@ export interface InputProps {
     icon?: React.ReactNode;
     className?: string;
     error?: string;
-    register?: Record<string, unknown>;
+    register?: UseFormRegisterReturn;
 }
