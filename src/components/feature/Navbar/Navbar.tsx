@@ -7,8 +7,8 @@ import { FaShop, FaUserTie } from "react-icons/fa6";
 import { GiGreenhouse } from "react-icons/gi";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/AuthContext";
-import { useCart } from "@/src/context/CartContext";
+import { useAuthStore } from "@/src/stores/authStore";
+import { useCartStore } from "@/src/stores/cartStore";
 import { SearchInput } from "../../ui/Input";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -22,8 +22,8 @@ const NAV_LINKS = [
 
 export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => {
   const router = useRouter();
-  const { user, loading, logout } = useAuth();
-  const { cartCount } = useCart();
+  const { user, loading, logout } = useAuthStore();
+  const { cartCount } = useCartStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -57,7 +57,7 @@ export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => 
     <header className="fixed top-0 inset-x-0 z-50">
       <nav className="bg-gradient-to-r from-[#07110C]/80 via-[#07110C]/65 to-[#0A1A12]/70 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-white">
+          <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 text-white">
             <GiGreenhouse className="text-3xl text-[#1DD317]" />
             <span className="text-xl font-bold tracking-tight">GreenPath</span>
           </Link>

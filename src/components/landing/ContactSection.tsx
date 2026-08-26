@@ -7,13 +7,13 @@ import {
   FaWhatsapp,
   FaTelegramPlane,
 } from "react-icons/fa";
-import { useToast } from "@/src/context/ToastContext";
+import { useToastStore } from "@/src/stores/toastStore";
 
 const inputClass =
   "w-[94%] rounded-[12px] border-none bg-white/10 p-4 text-[1rem] text-white outline-none transition-all duration-300 placeholder:text-[#aaa] focus:bg-white/15 focus:shadow-[0_0_0_2px_#1DD317]";
 
 export const ContactSection = () => {
-  const { showToast } = useToast();
+  const { showToast } = useToastStore();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");

@@ -146,5 +146,7 @@ export function getUserFromToken(token: string) {
     id_user:
       typeof payload.sub !== "undefined" ? Number(payload.sub) : undefined,
     email: typeof payload.email === "string" ? payload.email : undefined,
+    role_id:
+      typeof payload.role_id !== "undefined" ? Number(payload.role_id) : undefined,
   };
 }

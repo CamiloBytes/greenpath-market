@@ -24,7 +24,7 @@ export const MyShopPage = () => {
 
   return (
     <div className="mx-auto max-w-7xl">
-      <ShopManager shop={shop} onSave={handleSaveShop} saving={savingShop} />
+      <ShopManager key={shop?.id_shop ?? "new"} shop={shop} onSave={handleSaveShop} saving={savingShop} />
 
       {shop && (
         <section className="mt-10 ">

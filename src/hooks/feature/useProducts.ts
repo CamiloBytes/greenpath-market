@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { getProducts, searchProducts } from "@/src/services/Dashboard/ProductServices";
 import type { Product } from "@/src/types/ProductTypes";
-import { useCart } from "@/src/context/CartContext";
-import { useToast } from "@/src/context/ToastContext";
+import { useCartStore } from "@/src/stores/cartStore";
+import { useToastStore } from "@/src/stores/toastStore";
 
 export const useProducts = (searchQuery?: string) => {
-  const { addToCart } = useCart();
-  const { showToast } = useToast();
+  const { addToCart } = useCartStore();
+  const { showToast } = useToastStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

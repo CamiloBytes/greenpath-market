@@ -6,10 +6,10 @@ import {
   updateShopWithImage,
 } from "@/src/services/Shop/ShopServices";
 import type { Shop, ShopFormData } from "@/src/types/ShopTypes";
-import { useToast } from "@/src/context/ToastContext";
+import { useToastStore } from "@/src/stores/toastStore";
 
 export const useAdminShops = () => {
-  const { showToast } = useToast();
+  const { showToast } = useToastStore();
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingShop, setEditingShop] = useState<Shop | null>(null);

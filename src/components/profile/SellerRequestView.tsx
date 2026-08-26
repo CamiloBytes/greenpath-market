@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useSellerRequest } from "@/src/hooks/profile/useSellerRequest";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuthStore } from "@/src/stores/authStore";
 import Link from "next/link";
 
 export const SellerRequestView = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const { request, loading, submitting, submitRequest } = useSellerRequest();
   const [form, setForm] = useState({
     shopName: "",

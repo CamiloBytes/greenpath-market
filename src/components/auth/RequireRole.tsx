@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuthStore } from "@/src/stores/authStore";
 import { useEffect } from "react";
 
 export const RequireRole = ({
@@ -12,7 +12,7 @@ export const RequireRole = ({
   children: React.ReactNode;
 }) => {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuthStore();
 
   useEffect(() => {
     if (!loading && user && !allowedRoles.includes(user.role_id ?? 0)) {

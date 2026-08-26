@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "@/src/context/AuthContext";
-import { useToast } from "@/src/context/ToastContext";
+import { useAuthStore } from "@/src/stores/authStore";
+import { useToastStore } from "@/src/stores/toastStore";
 import { getShops, createShopWithImage, updateShop, updateShopWithImage } from "@/src/services/Shop/ShopServices";
 import {
   createProduct,
@@ -13,8 +13,8 @@ import type { Shop, ShopFormData } from "@/src/types/ShopTypes";
 import type { Product, ProductFormData } from "@/src/types/ProductTypes";
 
 export const useMyShop = () => {
-  const { user } = useAuth();
-  const { showToast } = useToast();
+  const { user } = useAuthStore();
+  const { showToast } = useToastStore();
 
   const [shop, setShop] = useState<Shop | null>(null);
   const [products, setProducts] = useState<Product[]>([]);

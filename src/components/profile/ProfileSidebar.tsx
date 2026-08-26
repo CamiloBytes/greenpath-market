@@ -5,7 +5,7 @@ import { FiLogOut } from "react-icons/fi";
 import { motion } from "framer-motion";
 import type { UserProfile } from "@/src/services/Auth/AuthServices";
 import type { ProfileView } from "@/src/types/ProfileTypes";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuthStore } from "@/src/stores/authStore";
 
 export const ProfileSidebar = ({
   profile,
@@ -30,7 +30,7 @@ export const ProfileSidebar = ({
   onCancelName: () => void;
   onLogout: () => void;
 }) => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const menuItems: { view: ProfileView; label: string }[] = [
     { view: "pedidos", label: "Pedidos" },
     { view: "ayuda", label: "Ayuda" },

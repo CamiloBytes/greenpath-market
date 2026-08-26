@@ -1,9 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import { AuthProvider } from "@/src/context/AuthContext";
-import { CartProvider } from "@/src/context/CartContext";
-import { ToastProvider } from "@/src/context/ToastContext";
+import { HydrationListener } from "@/src/components/ui/HydrationListener";
+import { ToastContainer } from "@/src/components/ui/ToastContainer";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -26,11 +25,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${poppins.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <AuthProvider>
-          <CartProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </CartProvider>
-        </AuthProvider>
+        <HydrationListener />
+        {children}
+        <ToastContainer />
       </body>
     </html>
   );

@@ -2,11 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuthStore } from "@/src/stores/authStore";
 
 export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuthStore();
 
   useEffect(() => {
     if (!loading && !user) {
