@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useToast } from "@/src/context/ToastContext";
+import { useToastStore } from "@/src/stores/toastStore";
 import {
   createPenalty,
   getShopPenalties,
@@ -10,7 +10,7 @@ import type { Penalty, PenaltyPayload } from "@/src/types/SellerRequestTypes";
 import type { Shop } from "@/src/types/ShopTypes";
 
 export const usePenalties = () => {
-  const { showToast } = useToast();
+  const { showToast } = useToastStore();
   const [shops, setShops] = useState<Shop[]>([]);
   const [selectedShopId, setSelectedShopId] = useState<number | null>(null);
   const [penalties, setPenalties] = useState<Penalty[]>([]);

@@ -26,6 +26,7 @@ export async function getShops({
     if (Array.isArray(obj.detail)) return obj.detail as Shop[];
     if (Array.isArray(obj.items)) return obj.items as Shop[];
     if (Array.isArray(obj.data)) return obj.data as Shop[];
+    if (Array.isArray(obj.shops)) return obj.shops as Shop[];
   }
   return [];
 }

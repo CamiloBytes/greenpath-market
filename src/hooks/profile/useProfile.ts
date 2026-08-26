@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/AuthContext";
-import { useToast } from "@/src/context/ToastContext";
+import { useAuthStore } from "@/src/stores/authStore";
+import { useToastStore } from "@/src/stores/toastStore";
 import { getProfile, updateUser } from "@/src/services/Auth/AuthServices";
 import type { UserProfile } from "@/src/services/Auth/AuthServices";
 import type { ProfileView } from "@/src/types/ProfileTypes";
 
 export const useProfile = () => {
   const router = useRouter();
-  const { logout } = useAuth();
-  const { showToast } = useToast();
+  const { logout } = useAuthStore();
+  const { showToast } = useToastStore();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [activeView, setActiveView] = useState<ProfileView | null>(null);

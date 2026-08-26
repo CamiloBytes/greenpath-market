@@ -1,14 +1,14 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/src/context/ToastContext";
-import { useAuth } from "@/src/context/AuthContext";
+import { useToastStore } from "@/src/stores/toastStore";
+import { useAuthStore } from "@/src/stores/authStore";
 import { registerUser, verifyUser } from "@/src/services/Auth/AuthServices";
 import type { RegisterFormPayload } from "@/src/services/Auth/AuthServices";
 
 export const useRegister = () => {
   const router = useRouter();
-  const { showToast } = useToast();
-  const { login } = useAuth();
+  const { showToast } = useToastStore();
+  const { login } = useAuthStore();
   const [step, setStep] = useState<"form" | "verification">("form");
   const [registeredEmail, setRegisteredEmail] = useState("");
   const [verifying, setVerifying] = useState(false);
@@ -56,7 +56,7 @@ export const useRegister = () => {
           });
         }
 
-        router.push("/dashboard");
+        router.push("/auth");
       } catch (err) {
         setVerifyError(
           err instanceof Error ? err.message : "Código inválido. Inténtalo de nuevo."

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/src/context/CartContext";
-import { useToast } from "@/src/context/ToastContext";
+import { useCartStore } from "@/src/stores/cartStore";
+import { useToastStore } from "@/src/stores/toastStore";
 import type { PaymentMethod } from "@/src/types/CartTypes";
 
 export const useCartCheckout = () => {
   const router = useRouter();
   const { cart, cartTotal, updateQuantity, removeFromCart, createOrder } =
-    useCart();
-  const { showToast } = useToast();
+    useCartStore();
+  const { showToast } = useToastStore();
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(
     null
   );

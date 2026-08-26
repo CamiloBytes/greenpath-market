@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSellerRequests } from "@/src/hooks/admin/useSellerRequests";
+import { FaUser, FaShieldAlt } from "react-icons/fa";
 
 export const SellerRequestsTab = () => {
   const { requests, loading, processing, handleApprove, handleDeny } =
@@ -39,8 +40,8 @@ export const SellerRequestsTab = () => {
   }
 
   return (
-    <div>
-      <h3 className="mb-4 text-xl font-bold text-white">
+    <div className="mx-auto max-w-3xl">
+      <h3 className="mb-6 text-xl font-bold text-white">
         Solicitudes Pendientes
       </h3>
 
@@ -49,64 +50,128 @@ export const SellerRequestsTab = () => {
           No hay solicitudes pendientes.
         </p>
       ) : (
-        <div className="flex flex-col gap-4">
-          {requests.map((req) => (
-            <div
-              key={req.id_request}
-              className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md"
-            >
-              <div className="mb-3 flex items-start justify-between">
-                <div>
-                  <h4 className="text-lg font-bold text-white">
-                    {req.shop_name}
-                  </h4>
-                  <p className="text-sm text-gray-400">
-                    {req.description}
-                  </p>
+        <div className="flex flex-col gap-5 p-4">
+          {requests.map((req) => {
+            const serial = `GP-${new Date(req.created_at).getFullYear()}-${String(req.id_request).padStart(4, "0")}`;
+            return (
+              <div
+                key={req.id_request}
+                className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0A1A12]/80 backdrop-blur-md"
+              >
+                {/* Watermark */}
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.03]">
+                  <span className="rotate-[-12deg] text-[5rem] font-black uppercase tracking-widest text-white select-none">
+                    GREENPATH
+                  </span>
                 </div>
-                <span className="rounded-full bg-yellow-500/20 px-3 py-1 text-xs font-bold text-yellow-300 border border-yellow-500/40">
-                  Pendiente
-                </span>
-              </div>
 
-              <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <p className="text-sm text-gray-300">
-                  <strong className="text-white">Dirección:</strong>{" "}
-                  {req.shop_address}
-                </p>
-                <p className="text-sm text-gray-300">
-                  <strong className="text-white">Fecha:</strong>{" "}
-                  {new Date(req.created_at).toLocaleDateString("es-CO")}
-                </p>
-              </div>
+                <div className="relative p-5">
+                  {/* Header */}
+                  <div className="mb-4 flex items-start justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1DD317]">
+                        Solicitud de Comercio
+                      </p>
+                      <p className="text-[10px] uppercase tracking-widest text-gray-500">
+                        República de GreenPath
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="mb-1 text-[10px] font-semibold tracking-wider text-gray-400">
+                        SN: <span className="text-white">{serial}</span>
+                      </p>
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/40 bg-yellow-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-300">
+                        <span className="h-1.5 w-1.5 rounded-full bg-yellow-400" />
+                        Pendiente
+                      </span>
+                    </div>
+                  </div>
 
-              <div className="mb-4 rounded-xl bg-white/5 p-3">
-                <p className="text-sm text-gray-300">
-                  <strong className="text-white">
-                    ¿Por qué quiere ser vendedor?
-                  </strong>
-                </p>
-                <p className="mt-1 text-sm text-gray-400">{req.why_seller}</p>
-              </div>
+                  {/* Body: Avatar + Info */}
+                  <div className="mb-4 flex gap-4">
+                    {/* Avatar */}
+                    <div className="flex h-20 w-16 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+                      {req.logo_url ? (
+                        <img
+                          src={req.logo_url}
+                          alt={req.shop_name}
+                          className="h-full w-full rounded-xl object-cover"
+                        />
+                      ) : (
+                        <FaUser className="text-2xl text-gray-500" />
+                      )}
+                    </div>
 
-              <div className="flex gap-3">
-                <button
-                  onClick={() => openActionModal(req.id_request, "approve")}
-                  disabled={processing === req.id_request}
-                  className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors disabled:opacity-50"
-                >
-                  Aprobar
-                </button>
-                <button
-                  onClick={() => openActionModal(req.id_request, "deny")}
-                  disabled={processing === req.id_request}
-                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors disabled:opacity-50"
-                >
-                  Denegar
-                </button>
+                    {/* Shop Info */}
+                    <div className=" flex flex-col w-full justify-between ">
+                      <h4 className="mb-2 text-xl font-bold uppercase tracking-wide text-white">
+                        {req.shop_name}
+                      </h4>
+
+                      <div className="flex items-center justify-between ">
+                        <div>
+                          <p className="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                            Fecha
+                          </p>
+                          <p className="text-sm font-semibold text-white">
+                            {new Date(req.created_at).toLocaleDateString("es-CO")}
+                          </p>
+                        </div>
+                        <div className="text-right  ">
+                          <p className="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                            Categoría / Propósito
+                          </p>
+                          <p className="text-sm font-semibold text-white">
+                            {req.description}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-2">
+                        <p className="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                          Ubicación
+                        </p>
+                        <p className="text-sm font-semibold text-white">
+                          {req.shop_address}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Security Question */}
+                  <div className="mb-4 rounded-xl border border-l-4 border-l-[#1DD317] border-white/10 bg-white/5 px-4 py-3">
+                    <div className="mb-1.5 flex items-center gap-2">
+                      <FaShieldAlt className="text-xs text-[#1DD317]" />
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                        ¿Por qué quiere ser vendedor?
+                      </p>
+                    </div>
+                    <p className="text-sm italic text-gray-400">
+                      &quot;{req.why_seller}&quot;
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => openActionModal(req.id_request, "approve")}
+                      disabled={processing === req.id_request}
+                      className="flex flex-1 items-center justify-center rounded-xl bg-green-600 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                    >
+                      Aprobar
+                    </button>
+                    <button
+                      onClick={() => openActionModal(req.id_request, "deny")}
+                      disabled={processing === req.id_request}
+                      className="flex flex-1 items-center justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+                    >
+                      Denegar
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

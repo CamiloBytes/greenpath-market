@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useCart } from "@/src/context/CartContext";
+import { useCartStore } from "@/src/stores/cartStore";
 import { motion } from "framer-motion";
 
 export const OrdersView = () => {
-  const { orders } = useCart();
+  const { orders } = useCartStore();
 
   if (orders.length === 0) {
     return (

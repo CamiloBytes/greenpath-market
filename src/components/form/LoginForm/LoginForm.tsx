@@ -10,12 +10,12 @@ import {
   LoginFormData,
   loginSchema,
 } from "@/src/validation/auth/AuthValidation";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuthStore } from "@/src/stores/authStore";
 import { loginUser } from "@/src/services/Auth/AuthServices";
 
 export const LoginForm = () => {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login } = useAuthStore();
 
   const {
     register,

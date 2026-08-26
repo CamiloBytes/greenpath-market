@@ -28,7 +28,7 @@ export const PenaltiesTab = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col items-center gap-6">
       <div>
         <h3 className="mb-4 text-xl font-bold text-white">
           Aplicar Penalización
@@ -39,7 +39,7 @@ export const PenaltiesTab = () => {
         ) : (
           <form
             onSubmit={handleSubmit}
-            className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md"
+            className="max-w-xl w-full rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md"
           >
             <div className="mb-4">
               <label className="mb-1 block text-sm font-medium text-white">
@@ -111,7 +111,7 @@ export const PenaltiesTab = () => {
               Esta tienda no tiene penalizaciones.
             </p>
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 max-w-xl w-full">
               {penalties.map((penalty) => (
                 <div
                   key={penalty.id_penalty}
