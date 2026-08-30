@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useToastStore } from "@/src/stores/toastStore";
+import { UnauthorizedError } from "@/src/services/apiClient";
 import {
   getSellerRequests,
   approveSellerRequest,
@@ -22,6 +23,7 @@ export const useSellerRequests = () => {
       const data = await getSellerRequests({ status: "pending" });
       setRequests(data);
     } catch (error) {
+      if (error instanceof UnauthorizedError) return;
       console.error("Error al cargar solicitudes:", error);
       showToast("Error al cargar las solicitudes", "error");
     } finally {

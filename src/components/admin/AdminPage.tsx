@@ -33,12 +33,12 @@ export const AdminPage = () => {
         ADMIN
       </h2>
 
-      <div className="mb-6 flex gap-2 border-b border-white/10 pb-3">
+      <div className="mb-6 flex gap-2 overflow-x-auto border-b border-white/10 pb-3">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+            className={`min-h-11 shrink-0 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
               activeTab === tab.key
                 ? "bg-[#1DD317] text-[#07110C]"
                 : "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white"

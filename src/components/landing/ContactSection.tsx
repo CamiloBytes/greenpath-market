@@ -37,7 +37,7 @@ export const ContactSection = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="flex min-h-screen items-center justify-center px-4 py-20"
+      className="flex min-h-dvh items-center justify-center px-4 py-20"
     >
       <div className="w-full max-w-[500px] overflow-hidden rounded-[1.5rem] bg-black/35 p-4 text-center text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-[12px]">
         <h2 className="mb-4 text-[1.4rem] font-bold sm:text-[2rem]">
@@ -89,7 +89,7 @@ export const ContactSection = () => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="p-2 transition-all duration-300 hover:-translate-y-[3px] hover:text-[#1DD317]"
+              className="flex h-11 w-11 items-center justify-center p-2 transition-all duration-300 hover:-translate-y-[3px] hover:text-[#1DD317]"
             >
               <FaInstagram />
             </a>
@@ -98,7 +98,7 @@ export const ContactSection = () => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"
-              className="p-2 transition-all duration-300 hover:-translate-y-[3px] hover:text-[#1DD317]"
+              className="flex h-11 w-11 items-center justify-center p-2 transition-all duration-300 hover:-translate-y-[3px] hover:text-[#1DD317]"
             >
               <FaWhatsapp />
             </a>
@@ -107,7 +107,7 @@ export const ContactSection = () => {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Telegram"
-              className="p-2 transition-all duration-300 hover:-translate-y-[3px] hover:text-[#1DD317]"
+              className="flex h-11 w-11 items-center justify-center p-2 transition-all duration-300 hover:-translate-y-[3px] hover:text-[#1DD317]"
             >
               <FaTelegramPlane />
             </a>

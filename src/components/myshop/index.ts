@@ -1,4 +1,5 @@
 export { MyShopPage } from "./MyShopPage";
 export { ShopManager } from "./ShopManager";
-export { ProductForm } from "./ProductForm";
+export { ProductFormModal } from "./ProductFormModal";
+export { ShopFormModal } from "./ShopFormModal";
 export { ProductItemCard } from "./ProductItemCard";

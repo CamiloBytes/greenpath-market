@@ -1,19 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { FiChevronDown } from "react-icons/fi";
 import { usePenalties } from "@/src/hooks/admin/usePenalties";
+
+const fieldClass =
+  "w-full min-h-11 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none transition-colors focus:border-red-400 focus:bg-white/15 [color-scheme:dark]";
+const labelClass =
+  "mb-1.5 block text-xs font-bold uppercase tracking-[0.15em] text-white/60";
 
 export const PenaltiesTab = () => {
   const {
     shops,
     selectedShopId,
     setSelectedShopId,
-    penalties,
     loadingShops,
-    loadingPenalties,
     submitting,
     handleApplyPenalty,
-    handleDeletePenalty,
   } = usePenalties();
 
   const [reason, setReason] = useState("");
@@ -21,123 +24,101 @@ export const PenaltiesTab = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reason || points <= 0) return;
-    await handleApplyPenalty(reason, points);
+    if (!reason.trim() || points <= 0 || !selectedShopId) return;
+    await handleApplyPenalty(reason.trim(), points);
     setReason("");
     setPoints(10);
   };
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div>
-        <h3 className="mb-4 text-xl font-bold text-white">
-          Aplicar Penalización
+    <div className="flex flex-col items-center gap-8">
+      <div className="w-full max-w-xl">
+        <h3 className="mb-1 text-xl font-bold text-white">
+          Aplicar penalización
         </h3>
+        <p className="mb-4 text-sm text-white/55">
+          Se descontarán los puntos indicados del score de la tienda.
+        </p>
 
         {loadingShops ? (
-          <p className="text-gray-300 italic">Cargando tiendas...</p>
+          <p className="text-gray-300 italic">Cargando tiendas…</p>
         ) : (
           <form
             onSubmit={handleSubmit}
-            className="max-w-xl w-full rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md"
+            className="w-full rounded-2xl border border-red-400/20 bg-white/5 p-5 backdrop-blur-md sm:p-6"
           >
             <div className="mb-4">
-              <label className="mb-1 block text-sm font-medium text-white">
-                Seleccionar Tienda:
-              </label>
-              <select
-                value={selectedShopId ?? ""}
-                onChange={(e) => setSelectedShopId(Number(e.target.value))}
-                className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white outline-none focus:border-[#1DD317] transition-colors"
+              <label
+                htmlFor="penalty-shop"
+                className={labelClass}
               >
-                {shops.map((shop) => (
-                  <option key={shop.id_shop} value={shop.id_shop} className="bg-[#07110C]">
-                    {shop.shop_name} (Score: {shop.shop_score})
-                  </option>
-                ))}
-              </select>
+                Tienda
+              </label>
+              <div className="relative">
+                <select
+                  id="penalty-shop"
+                  value={selectedShopId ?? ""}
+                  onChange={(e) => setSelectedShopId(Number(e.target.value))}
+                  required
+                  className={`${fieldClass} appearance-none pr-10 [&>option]:bg-[#07110C]`}
+                >
+                  {shops.map((shop) => (
+                    <option key={shop.id_shop} value={shop.id_shop}>
+                      {shop.shop_name} (Score: {shop.shop_score})
+                    </option>
+                  ))}
+                </select>
+                <FiChevronDown
+                  aria-hidden
+                  size={16}
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-red-400"
+                />
+              </div>
             </div>
 
             <div className="mb-4">
-              <label className="mb-1 block text-sm font-medium text-white">
-                Razón:
+              <label htmlFor="penalty-reason" className={labelClass}>
+                Razón
               </label>
-              <input
-                type="text"
+              <textarea
+                id="penalty-reason"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="Ej: Producto no llegó al cliente"
-                className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-gray-400 outline-none focus:border-[#1DD317] transition-colors"
+                required
+                rows={2}
+                placeholder="Ej: El producto no llegó al cliente"
+                className={`${fieldClass} resize-none`}
               />
             </div>
 
-            <div className="mb-4">
-              <label className="mb-1 block text-sm font-medium text-white">
-                Puntos a deducir:
-              </label>
-              <input
-                type="number"
-                min={1}
-                max={100}
-                value={points}
-                onChange={(e) => setPoints(Number(e.target.value))}
-                className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white outline-none focus:border-[#1DD317] transition-colors"
-              />
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+              <div className="w-full sm:w-40">
+                <label htmlFor="penalty-points" className={labelClass}>
+                  Puntos a deducir
+                </label>
+                <input
+                  id="penalty-points"
+                  type="number"
+                  value={points}
+                  onChange={(e) => setPoints(Number(e.target.value))}
+                  min={1}
+                  max={100}
+                  required
+                  inputMode="numeric"
+                  className={fieldClass}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={submitting || !reason.trim() || !selectedShopId}
+                className="min-h-11 flex-1 rounded-xl bg-red-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? "Aplicando…" : "Aplicar penalización"}
+              </button>
             </div>
-
-            <button
-              type="submit"
-              disabled={submitting || !reason || !selectedShopId}
-              className="w-full rounded-xl bg-red-600 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {submitting ? "Aplicando..." : "Aplicar Penalización"}
-            </button>
           </form>
         )}
       </div>
-
-      {selectedShopId && (
-        <div>
-          <h3 className="mb-4 text-xl font-bold text-white">
-            Penalizaciones de la Tienda
-          </h3>
-
-          {loadingPenalties ? (
-            <p className="text-gray-300 italic">
-              Cargando penalizaciones...
-            </p>
-          ) : penalties.length === 0 ? (
-            <p className="text-center text-gray-300 italic">
-              Esta tienda no tiene penalizaciones.
-            </p>
-          ) : (
-            <div className="flex flex-col gap-3 max-w-xl w-full">
-              {penalties.map((penalty) => (
-                <div
-                  key={penalty.id_penalty}
-                  className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-md"
-                >
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-white">
-                      {penalty.reason}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      -{penalty.points_deducted} puntos ·{" "}
-                      {new Date(penalty.created_at).toLocaleDateString("es-CO")}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleDeletePenalty(penalty.id_penalty)}
-                    className="ml-4 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold text-gray-300 hover:bg-white/20 hover:text-white transition-colors"
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };

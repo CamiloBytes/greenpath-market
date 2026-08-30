@@ -24,13 +24,13 @@ export const FooterSection = () => {
 
           <div className="flex flex-col items-start">
             <h3 className="mb-3 text-lg font-semibold">Follow Us</h3>
-            <div className="flex gap-5">
+            <div className="flex gap-2">
               <a
                 href="mailto:info@greenpathmarket.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Email"
-                className="text-xl text-gray-400 transition-colors duration-300 hover:text-[#1DD317]"
+                className="flex h-11 w-11 items-center justify-center rounded-full text-xl text-gray-400 transition-colors duration-300 hover:bg-white/10 hover:text-[#1DD317]"
               >
                 <FaEnvelope />
               </a>
@@ -39,7 +39,7 @@ export const FooterSection = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="text-xl text-gray-400 transition-colors duration-300 hover:text-[#1DD317]"
+                className="flex h-11 w-11 items-center justify-center rounded-full text-xl text-gray-400 transition-colors duration-300 hover:bg-white/10 hover:text-[#1DD317]"
               >
                 <FaFacebook />
               </a>
@@ -48,7 +48,7 @@ export const FooterSection = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="text-xl text-gray-400 transition-colors duration-300 hover:text-[#1DD317]"
+                className="flex h-11 w-11 items-center justify-center rounded-full text-xl text-gray-400 transition-colors duration-300 hover:bg-white/10 hover:text-[#1DD317]"
               >
                 <FaInstagram />
               </a>
@@ -57,7 +57,7 @@ export const FooterSection = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube"
-                className="text-xl text-gray-400 transition-colors duration-300 hover:text-[#1DD317]"
+                className="flex h-11 w-11 items-center justify-center rounded-full text-xl text-gray-400 transition-colors duration-300 hover:bg-white/10 hover:text-[#1DD317]"
               >
                 <FaYoutube />
               </a>

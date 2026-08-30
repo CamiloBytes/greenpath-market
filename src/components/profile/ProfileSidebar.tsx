@@ -60,13 +60,13 @@ export const ProfileSidebar = ({
             />
             <button
               onClick={onSaveName}
-              className="rounded-lg bg-[#1DD317] px-2.5 py-1.5 text-xs font-bold text-[#07110C]"
+              className="min-h-11 rounded-lg bg-[#1DD317] px-3 py-2 text-xs font-bold text-[#07110C]"
             >
               Guardar
             </button>
             <button
               onClick={onCancelName}
-              className="rounded-lg bg-white/10 px-2.5 py-1.5 text-xs font-bold text-gray-300"
+              className="min-h-11 rounded-lg bg-white/10 px-3 py-2 text-xs font-bold text-gray-300"
             >
               Cancelar
             </button>
@@ -79,7 +79,7 @@ export const ProfileSidebar = ({
             <button
               onClick={onEditName}
               aria-label="Editar nombre"
-              className="text-sm text-white/60 hover:text-[#1DD317] transition-colors"
+              className="flex h-11 w-11 items-center justify-center text-sm text-white/60 hover:text-[#1DD317] transition-colors"
             >
               <FiLogOut className="rotate-180" size={16} />
             </button>
@@ -94,7 +94,7 @@ export const ProfileSidebar = ({
             onClick={() => onSelectView(item.view)}
             whileHover={{ x: 4 }}
             whileTap={{ scale: 0.98 }}
-            className={`w-full rounded-xl px-4 py-2.5 text-left text-sm font-semibold text-white transition-colors ${
+            className={`min-h-11 w-full rounded-xl px-4 py-2.5 text-left text-sm font-semibold text-white transition-colors ${
               activeView === item.view
                 ? "bg-gradient-to-r from-[#284827] to-[#329a2e]"
                 : "bg-white/5 hover:bg-white/10"
@@ -106,7 +106,7 @@ export const ProfileSidebar = ({
 
         <button
           onClick={onLogout}
-          className="w-full rounded-xl bg-gray-500/30 px-4 py-2.5 text-left text-sm font-semibold text-gray-300 hover:bg-gray-500/50 transition-colors"
+          className="min-h-11 w-full rounded-xl bg-gray-500/30 px-4 py-2.5 text-left text-sm font-semibold text-gray-300 hover:bg-gray-500/50 transition-colors"
         >
           Cerrar Sesión
         </button>

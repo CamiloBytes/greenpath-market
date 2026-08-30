@@ -18,7 +18,7 @@ export const AboutSection = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="flex min-h-screen flex-col items-center justify-center px-4 py-24 text-center text-white sm:px-8"
+      className="flex min-h-dvh flex-col items-center justify-center px-4 py-24 text-center text-white sm:px-8"
     >
       <h2 className="mb-4 text-[1.8rem] font-bold sm:text-[3rem]">About Us</h2>
       <p className="mx-auto mb-12 max-w-[1600px] text-[1rem] font-medium leading-[1.8] text-[#ddd] sm:text-[1.9rem]">
@@ -43,10 +43,10 @@ export const AboutSection = () => {
             whileHover={{ y: -10 }}
             className="group relative flex h-auto min-h-[80px] w-[130px] flex-col items-center justify-center overflow-hidden rounded-2xl bg-white/10 p-4 backdrop-blur-[10px] transition-shadow duration-300 hover:shadow-[0_8px_25px_rgba(0,0,0,0.3)] sm:h-[10vh] sm:w-[20vh]"
           >
-            <h3 className="mb-[-0.1rem] text-center text-[0.8rem] font-bold text-white sm:text-[1.2rem]">
+            <h3 className="mb-[-0.1rem] text-center text-sm font-bold text-white sm:text-[1.2rem]">
               {creator.name}
             </h3>
-            <p className="mb-0 block px-4 pt-1 text-center text-[0.7rem] font-black text-[#19af14] opacity-0 translate-y-[10px] transition-all duration-[0.4s] group-hover:opacity-100 group-hover:translate-y-0 sm:text-[1rem]">
+            <p className="mb-0 block px-4 pt-1 text-center text-xs font-black text-[#19af14] opacity-0 translate-y-[10px] transition-all duration-[0.4s] group-hover:opacity-100 group-hover:translate-y-0 sm:text-[1rem]">
               {creator.role}
             </p>
           </motion.div>

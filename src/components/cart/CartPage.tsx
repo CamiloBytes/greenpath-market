@@ -87,7 +87,8 @@ export const CartPage = () => {
                         onClick={() =>
                           updateQuantity(item.id_product, item.quantity - 1)
                         }
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                        aria-label="Disminuir cantidad"
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
                       >
                         −
                       </button>
@@ -98,7 +99,8 @@ export const CartPage = () => {
                         onClick={() =>
                           updateQuantity(item.id_product, item.quantity + 1)
                         }
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                        aria-label="Aumentar cantidad"
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
                       >
                         +
                       </button>
@@ -113,7 +115,7 @@ export const CartPage = () => {
                 <button
                   onClick={() => removeFromCart(item.id_product)}
                   aria-label="Eliminar"
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-500/80 text-lg text-white hover:bg-red-500 transition-colors"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-500/80 text-xl text-white hover:bg-red-500 transition-colors"
                 >
                   ×
                 </button>

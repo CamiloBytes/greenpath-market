@@ -1,6 +1,7 @@
 "use client";
 
 import type { UseFormRegisterReturn } from "react-hook-form";
+import { FiChevronDown } from "react-icons/fi";
 
 export interface SelectOption {
   value: string;
@@ -30,7 +31,8 @@ export const Select = ({
           peer
           w-full
           bg-transparent
-          px-[10px]
+          pl-[10px]
+          pr-9
           pt-5
           pb-1
           text-white
@@ -39,6 +41,7 @@ export const Select = ({
           outline-none
           border-none
           cursor-pointer
+          appearance-none
           [&>option]:text-black
         `}
       >
@@ -50,6 +53,12 @@ export const Select = ({
         ))}
       </select>
 
+      <FiChevronDown
+        aria-hidden
+        size={16}
+        className="pointer-events-none absolute right-2 bottom-2 text-[#1DD317]"
+      />
+
       {label && (
         <label
           className={`
@@ -57,11 +66,9 @@ export const Select = ({
             left-[10px]
             top-2
             text-xs
-            text-white
+            ${error ? "text-red-400" : "text-white"}
             pointer-events-none
             origin-left
-            transition-all
-            duration-200
           `}
         >
           {label}
@@ -73,16 +80,21 @@ export const Select = ({
           h-[1.5px]
           w-full
           transition-all
-          duration-700
+          duration-300
+          motion-reduce:transition-none
           ${
             error
               ? "bg-red-500"
-              : "bg-gradient-to-r from-[#284827] via-[#20B11B] to-[#1DD317]"
+              : "bg-gradient-to-r from-[#284827] via-[#20B11B] to-[#1DD317] peer-focus:bg-none peer-focus:bg-[#1DD317] peer-focus:h-[2px] peer-focus:shadow-[0_0_12px_rgba(29,211,23,0.45)]"
           }
         `}
       />
 
-      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+      {error && (
+        <p role="alert" className="mt-1 text-sm text-red-400">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

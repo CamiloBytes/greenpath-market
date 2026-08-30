@@ -21,7 +21,7 @@ export const ShopCard = ({
       className="flex flex-col items-center gap-2 rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm"
     >
       {shop.logo_url ? (
-        <div className="relative h-[160px] w-[160px] overflow-hidden rounded-full">
+        <div className="relative h-28 w-28 overflow-hidden rounded-full sm:h-[160px] sm:w-[160px]">
           <Image
             src={shop.logo_url}
             alt={shop.shop_name}
@@ -31,7 +31,7 @@ export const ShopCard = ({
           />
         </div>
       ) : (
-        <div className="flex h-[160px] w-[160px] items-center justify-center rounded-full bg-gray-100 text-4xl text-gray-400">
+        <div className="flex h-28 w-28 items-center justify-center rounded-full bg-gray-100 text-4xl text-gray-400 sm:h-[160px] sm:w-[160px]">
           🏪
         </div>
       )}
@@ -48,13 +48,13 @@ export const ShopCard = ({
       <div className="mt-2 flex gap-2">
         <button
           onClick={() => onEdit(shop)}
-          className="rounded-lg bg-[#007bff] px-4 py-1.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          className="min-h-11 rounded-lg bg-[#007bff] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
         >
           Editar
         </button>
         <button
           onClick={() => onDelete(shop)}
-          className="rounded-lg bg-[#dc3545] px-4 py-1.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          className="min-h-11 rounded-lg bg-[#dc3545] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
         >
           Borrar
         </button>

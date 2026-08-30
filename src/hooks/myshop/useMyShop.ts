@@ -61,8 +61,8 @@ export const useMyShop = () => {
   }, [loadShop, loadProducts]);
 
   const handleSaveShop = useCallback(
-    async (data: ShopFormData) => {
-      if (!userId) return;
+    async (data: ShopFormData): Promise<boolean> => {
+      if (!userId) return false;
       setSavingShop(true);
 
       try {
@@ -94,7 +94,7 @@ export const useMyShop = () => {
               "Por favor selecciona un archivo de imagen para el logo.",
               "error"
             );
-            return;
+            return false;
           }
           const formData = new FormData();
           formData.append("id_user", String(userId));
@@ -109,8 +109,10 @@ export const useMyShop = () => {
         showToast("Tienda guardada exitosamente");
         const updated = await loadShop();
         if (updated) loadProducts(updated.id_shop);
+        return true;
       } catch {
         showToast("Error al guardar la tienda", "error");
+        return false;
       } finally {
         setSavingShop(false);
       }
