@@ -3,6 +3,7 @@ import { getProducts, searchProducts } from "@/src/services/Dashboard/ProductSer
 import type { Product } from "@/src/types/ProductTypes";
 import { useCartStore } from "@/src/stores/cartStore";
 import { useToastStore } from "@/src/stores/toastStore";
+import { useProductEvents } from "@/src/hooks/feature/useProductEvents";
 
 export const useProducts = (searchQuery?: string) => {
   const { addToCart } = useCartStore();
@@ -37,6 +38,29 @@ export const useProducts = (searchQuery?: string) => {
       active = false;
     };
   }, [searchQuery]);
+
+  useProductEvents({
+    onCreated: (product) => {
+      if (searchQuery) return;
+      setProducts((prev) =>
+        prev.some((p) => p.id_product === product.id_product)
+          ? prev
+          : [product, ...prev]
+      );
+    },
+    onUpdated: (product) => {
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id_product === product.id_product ? { ...p, ...product } : p
+        )
+      );
+    },
+    onDeleted: (product) => {
+      setProducts((prev) =>
+        prev.filter((p) => p.id_product !== product.id_product)
+      );
+    },
+  });
 
   const handleAddToCart = useCallback(
     (product: Product) => {

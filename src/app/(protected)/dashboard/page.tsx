@@ -16,7 +16,7 @@ export default function DashboardPage({
   const [category, setCategory] = useState(0);
 
   return (
-    <main className="min-h-screen px-6 pt-9 pb-10">
+    <main className="min-h-dvh px-4 pt-9 pb-10 sm:px-6">
       <div className="mx-auto max-w-7xl">
         {q ? (
           <div>
@@ -26,7 +26,7 @@ export default function DashboardPage({
               </span>
               <button
                 onClick={() => router.push("/dashboard")}
-                className="rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+                className="min-h-11 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20"
               >
                 Limpiar búsqueda
               </button>
@@ -35,7 +35,9 @@ export default function DashboardPage({
           </div>
         ) : (
           <>
-            <BannerCarousel />
+            <div className="-mx-4 rounded-2xl bg-[#07110C] sm:mx-0 sm:bg-transparent">
+              <BannerCarousel />
+            </div>
             <CategorySection
               activeCategory={category}
               onSelectCategory={setCategory}

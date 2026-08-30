@@ -3,10 +3,13 @@ import {
   clearToken,
   getToken,
   setToken,
-  TOKEN_KEY,
   UNAUTHORIZED_EVENT,
 } from "@/src/services/apiClient";
-import { getUserFromToken } from "@/src/services/Auth/AuthServices";
+import {
+  getUserFromToken,
+  isTokenExpired,
+} from "@/src/services/Auth/AuthServices";
+import { useToastStore } from "@/src/stores/toastStore";
 
 export interface AuthUser {
   id_user?: number;
@@ -45,6 +48,14 @@ export const useAuthStore = create<AuthState>((set) => ({
   hydrate: () => {
     const token = getToken();
     const storedUser = readStoredUser();
+
+    if (token && isTokenExpired(token)) {
+      clearToken();
+      window.localStorage.removeItem(USER_KEY);
+      set({ user: null, loading: false, hydrated: true });
+      return;
+    }
+
     const fallbackUser = token ? getUserFromToken(token) : null;
     set({
       user: storedUser ?? fallbackUser ?? null,
@@ -68,6 +79,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 if (typeof window !== "undefined") {
   window.addEventListener(UNAUTHORIZED_EVENT, () => {
+    useToastStore
+      .getState()
+      .showToast("Tu sesión ha expirado. Inicia sesión de nuevo.", "error");
     clearToken();
     window.localStorage.removeItem(USER_KEY);
     useAuthStore.getState().logout();

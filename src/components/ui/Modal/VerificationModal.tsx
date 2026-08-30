@@ -23,6 +23,7 @@ export const VerificationModal = ({
 }: VerificationModalProps) => {
   const [step, setStep] = useState<"sent" | "input">("sent");
   const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -31,12 +32,13 @@ export const VerificationModal = ({
     }
   }, [step]);
 
-  useEffect(() => {
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (!isOpen) {
       setStep("sent");
       setCode(["", "", "", "", "", ""]);
     }
-  }, [isOpen]);
+  }
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -150,7 +152,7 @@ export const VerificationModal = ({
                   {email}
                 </p>
 
-                <div className="mb-4 flex gap-3">
+                <div className="mb-4 flex flex-wrap justify-center gap-2 sm:gap-3">
                   {code.map((digit, index) => (
                     <input
                       key={index}
@@ -163,7 +165,7 @@ export const VerificationModal = ({
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       onPaste={index === 0 ? handlePaste : undefined}
                       disabled={verifying}
-                      className="h-14 w-12 rounded-xl border border-white/20 bg-white/10 text-center text-xl font-bold text-white outline-none transition-colors focus:border-[#1DD317] disabled:opacity-50"
+                      className="h-14 w-11 rounded-xl border border-white/20 bg-white/10 text-center text-xl font-bold text-white outline-none transition-colors focus:border-[#1DD317] disabled:opacity-50 sm:w-12"
                     />
                   ))}
                 </div>

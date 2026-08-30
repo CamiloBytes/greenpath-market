@@ -131,6 +131,12 @@ export function decodeToken(token: string) {
   }
 }
 
+export function isTokenExpired(token: string): boolean {
+  const payload = decodeToken(token);
+  if (!payload || typeof payload.exp !== "number") return false;
+  return payload.exp * 1000 < Date.now();
+}
+
 export function getUserFromToken(token: string) {
   const payload = decodeToken(token);
 

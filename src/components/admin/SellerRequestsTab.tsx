@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useSellerRequests } from "@/src/hooks/admin/useSellerRequests";
 import { FaUser, FaShieldAlt } from "react-icons/fa";
 
@@ -69,18 +70,18 @@ export const SellerRequestsTab = () => {
                   {/* Header */}
                   <div className="mb-4 flex items-start justify-between">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1DD317]">
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#1DD317]">
                         Solicitud de Comercio
                       </p>
-                      <p className="text-[10px] uppercase tracking-widest text-gray-500">
+                      <p className="text-xs uppercase tracking-widest text-gray-500">
                         República de GreenPath
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="mb-1 text-[10px] font-semibold tracking-wider text-gray-400">
+                      <p className="mb-1 text-xs font-semibold tracking-wider text-gray-400">
                         SN: <span className="text-white">{serial}</span>
                       </p>
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/40 bg-yellow-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-yellow-300">
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/40 bg-yellow-500/20 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-yellow-300">
                         <span className="h-1.5 w-1.5 rounded-full bg-yellow-400" />
                         Pendiente
                       </span>
@@ -92,9 +93,11 @@ export const SellerRequestsTab = () => {
                     {/* Avatar */}
                     <div className="flex h-20 w-16 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
                       {req.logo_url ? (
-                        <img
+                        <Image
                           src={req.logo_url}
                           alt={req.shop_name}
+                          width={64}
+                          height={80}
                           className="h-full w-full rounded-xl object-cover"
                         />
                       ) : (
@@ -110,7 +113,7 @@ export const SellerRequestsTab = () => {
 
                       <div className="flex items-center justify-between ">
                         <div>
-                          <p className="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                          <p className="mb-0.5 text-xs font-bold uppercase tracking-widest text-gray-500">
                             Fecha
                           </p>
                           <p className="text-sm font-semibold text-white">
@@ -118,7 +121,7 @@ export const SellerRequestsTab = () => {
                           </p>
                         </div>
                         <div className="text-right  ">
-                          <p className="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                          <p className="mb-0.5 text-xs font-bold uppercase tracking-widest text-gray-500">
                             Categoría / Propósito
                           </p>
                           <p className="text-sm font-semibold text-white">
@@ -128,7 +131,7 @@ export const SellerRequestsTab = () => {
                       </div>
 
                       <div className="mt-2">
-                        <p className="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                        <p className="mb-0.5 text-xs font-bold uppercase tracking-widest text-gray-500">
                           Ubicación
                         </p>
                         <p className="text-sm font-semibold text-white">
@@ -142,7 +145,7 @@ export const SellerRequestsTab = () => {
                   <div className="mb-4 rounded-xl border border-l-4 border-l-[#1DD317] border-white/10 bg-white/5 px-4 py-3">
                     <div className="mb-1.5 flex items-center gap-2">
                       <FaShieldAlt className="text-xs text-[#1DD317]" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                      <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
                         ¿Por qué quiere ser vendedor?
                       </p>
                     </div>
@@ -156,14 +159,14 @@ export const SellerRequestsTab = () => {
                     <button
                       onClick={() => openActionModal(req.id_request, "approve")}
                       disabled={processing === req.id_request}
-                      className="flex flex-1 items-center justify-center rounded-xl bg-green-600 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-green-700 disabled:opacity-50"
+                      className="flex min-h-11 flex-1 items-center justify-center rounded-xl bg-green-600 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-green-700 disabled:opacity-50"
                     >
                       Aprobar
                     </button>
                     <button
                       onClick={() => openActionModal(req.id_request, "deny")}
                       disabled={processing === req.id_request}
-                      className="flex flex-1 items-center justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+                      className="flex min-h-11 flex-1 items-center justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-red-700 disabled:opacity-50"
                     >
                       Denegar
                     </button>
@@ -176,7 +179,7 @@ export const SellerRequestsTab = () => {
       )}
 
       {activeRequestId && activeAction && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 p-4">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4">
           <div
             className="w-full max-w-md rounded-2xl bg-[#1a2e1a] p-6 border border-white/10"
             onClick={(e) => e.stopPropagation()}
@@ -206,7 +209,7 @@ export const SellerRequestsTab = () => {
               <button
                 onClick={confirmAction}
                 disabled={processing === activeRequestId}
-                className={`flex-1 rounded-lg px-4 py-2.5 font-semibold text-white transition-colors disabled:opacity-50 ${
+                className={`min-h-11 flex-1 rounded-lg px-4 py-2.5 font-semibold text-white transition-colors disabled:opacity-50 ${
                   activeAction === "approve"
                     ? "bg-green-600 hover:bg-green-700"
                     : "bg-red-600 hover:bg-red-700"
@@ -221,7 +224,7 @@ export const SellerRequestsTab = () => {
                   setActiveRequestId(null);
                   setActiveAction(null);
                 }}
-                className="flex-1 rounded-lg bg-gray-600 px-4 py-2.5 font-semibold text-white hover:bg-gray-700 transition-colors"
+                className="min-h-11 flex-1 rounded-lg bg-gray-600 px-4 py-2.5 font-semibold text-white hover:bg-gray-700 transition-colors"
               >
                 Cancelar
               </button>
