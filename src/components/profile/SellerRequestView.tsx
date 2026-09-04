@@ -2,38 +2,49 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FiImage } from "react-icons/fi";
 import { useSellerRequest } from "@/src/hooks/profile/useSellerRequest";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useToastStore } from "@/src/stores/toastStore";
 import { uploadSellerRequestLogo } from "@/src/services/Seller/SellerRequestServices";
 import { DEFAULT_AVATAR_URL } from "@/src/constants/images";
+import {
+  sellerRequestSchema,
+  type SellerRequestFormData,
+} from "@/src/validation/seller/SellerRequestValidation";
 import Link from "next/link";
+
+const fieldClass =
+  "w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-gray-400 outline-none focus:border-[#1DD317] transition-colors";
+const labelClass = "mb-1 block text-sm font-medium text-white";
+const errorClass = "mt-1 text-xs text-red-400";
 
 export const SellerRequestView = () => {
   const { user } = useAuthStore();
   const { showToast } = useToastStore();
   const { request, loading, submitting, submitRequest } = useSellerRequest();
-  const [form, setForm] = useState({
-    shopName: "",
-    description: "",
-    address: "",
-    reason: "",
-  });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<SellerRequestFormData>({
+    resolver: zodResolver(sellerRequestSchema),
+    defaultValues: {
+      shop_name: "",
+      description: "",
+      shop_address: "",
+      why_seller: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.shopName || !form.description || !form.address || !form.reason) return;
-
+  const onSubmit = async (data: SellerRequestFormData) => {
     setUploading(true);
     try {
       let logo_url: string = DEFAULT_AVATAR_URL;
@@ -42,14 +53,14 @@ export const SellerRequestView = () => {
       }
 
       await submitRequest({
-        shop_name: form.shopName,
-        description: form.description,
-        shop_address: form.address,
+        shop_name: data.shop_name,
+        description: data.description,
+        shop_address: data.shop_address ?? "",
         logo_url,
-        why_seller: form.reason,
+        why_seller: data.why_seller,
       });
 
-      setForm({ shopName: "", description: "", address: "", reason: "" });
+      reset();
       setLogoFile(null);
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
@@ -82,7 +93,8 @@ export const SellerRequestView = () => {
         </h3>
         <div className="rounded-2xl border border-[#1DD317]/40 bg-[#1DD317]/10 p-6">
           <p className="mb-3 text-sm text-[#1DD317]">
-            Ya eres vendedor. Puedes gestionar tu tienda y productos desde la sección &quot;Mi Tienda&quot;.
+            Ya eres vendedor. Puedes gestionar tu tienda y productos desde la
+            sección &quot;Mi Tienda&quot;.
           </p>
           <Link
             href="/my-shop"
@@ -103,7 +115,8 @@ export const SellerRequestView = () => {
         </h3>
         <div className="rounded-2xl border border-blue-500/40 bg-blue-500/10 p-6">
           <p className="text-sm text-blue-300">
-            Eres administrador. Las solicitudes de vendedor se gestionan desde el panel de administración.
+            Eres administrador. Las solicitudes de vendedor se gestionan desde el
+            panel de administración.
           </p>
         </div>
       </div>
@@ -149,7 +162,9 @@ export const SellerRequestView = () => {
           className={`rounded-2xl border ${config.bg} ${config.border} p-6`}
         >
           <div className="mb-3 flex items-center gap-3">
-            <span className={`rounded-full px-3 py-1 text-xs font-bold ${config.bg} ${config.text} border ${config.border}`}>
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-bold ${config.bg} ${config.text} border ${config.border}`}
+            >
               {config.label}
             </span>
             <span className="text-sm text-gray-400">
@@ -165,7 +180,8 @@ export const SellerRequestView = () => {
 
           <div className="mb-4 rounded-xl bg-white/5 p-4">
             <p className="text-sm text-gray-300">
-              <strong className="text-white">Tienda:</strong> {request.shop_name}
+              <strong className="text-white">Tienda:</strong>{" "}
+              {request.shop_name}
             </p>
             <p className="text-sm text-gray-300">
               <strong className="text-white">Dirección:</strong>{" "}
@@ -211,53 +227,45 @@ export const SellerRequestView = () => {
         administrador revisará tu caso y te notificaremos por correo electrónico.
       </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-white">
-            Nombre de la tienda:
-          </label>
+          <label className={labelClass}>Nombre de la tienda:</label>
           <input
             type="text"
-            name="shopName"
-            value={form.shopName}
-            onChange={handleChange}
+            {...register("shop_name")}
             placeholder="Ej: Mi Tienda Orgánica"
-            className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-gray-400 outline-none focus:border-[#1DD317] transition-colors"
+            className={fieldClass}
           />
+          {errors.shop_name && (
+            <p className={errorClass}>{errors.shop_name.message}</p>
+          )}
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-white">
-            Descripción:
-          </label>
+          <label className={labelClass}>Descripción:</label>
           <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
+            {...register("description")}
             rows={3}
             placeholder="Describe tu tienda y los productos que vendes..."
-            className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-gray-400 outline-none focus:border-[#1DD317] transition-colors resize-none"
+            className={`${fieldClass} resize-none`}
           />
+          {errors.description && (
+            <p className={errorClass}>{errors.description.message}</p>
+          )}
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-white">
-            Dirección:
-          </label>
+          <label className={labelClass}>Dirección:</label>
           <input
             type="text"
-            name="address"
-            value={form.address}
-            onChange={handleChange}
+            {...register("shop_address")}
             placeholder="Ej: Calle 123 # 45-67"
-            className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-gray-400 outline-none focus:border-[#1DD317] transition-colors"
+            className={fieldClass}
           />
         </div>
 
         <div>
-          <span className="mb-1 block text-sm font-medium text-white">
-            Logo de la tienda (opcional)
-          </span>
+          <span className={labelClass}>Logo de la tienda (opcional)</span>
           <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-[#1DD317]/40 bg-white/5 px-4 py-2.5 text-sm text-white/70 transition-colors hover:border-[#1DD317] hover:bg-white/10">
             <FiImage className="shrink-0 text-[#1DD317]" />
             <span className="truncate">
@@ -293,23 +301,24 @@ export const SellerRequestView = () => {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-white">
+          <label className={labelClass}>
             ¿Por qué quieres ser vendedor?
           </label>
           <textarea
-            name="reason"
-            value={form.reason}
-            onChange={handleChange}
+            {...register("why_seller")}
             rows={3}
             placeholder="Cuéntanos por qué te gustaría unirte como vendedor..."
-            className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-gray-400 outline-none focus:border-[#1DD317] transition-colors resize-none"
+            className={`${fieldClass} resize-none`}
           />
+          {errors.why_seller && (
+            <p className={errorClass}>{errors.why_seller.message}</p>
+          )}
         </div>
 
         <button
           type="submit"
           disabled={submitting || uploading}
-          className="mt-2 w-full rounded-xl bg-[#1DD317] px-6 py-3 text-sm font-bold text-[#07110C] transition-colors hover:bg-[#16a813] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="mt-2 w-full rounded-xl bg-[#1DD317] px-6 py-3 text-sm font-bold text-[#07110C] transition-colors hover:bg-[#16a813] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {uploading
             ? "Subiendo imagen..."

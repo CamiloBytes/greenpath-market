@@ -1,16 +1,21 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Modal } from "../ui/Modal/Modal";
-import { useProductForm } from "@/src/hooks/myshop/useProductForm";
 import { useProductImages } from "@/src/hooks/myshop/useProductImages";
 import { ImageUploader } from "../ui/ImageUploader";
 import { FiChevronDown, FiLoader, FiTrash2, FiRefreshCw } from "react-icons/fi";
 import { useToastStore } from "@/src/stores/toastStore";
 import { IMAGE_ACCEPT_ATTR, validateImageFile } from "@/src/utils/imageUpload";
+import {
+  productFormSchema,
+  type ProductFormInput,
+} from "@/src/validation/product/ProductValidation";
 import type {
   Product,
-  ProductFormData,
   ProductImage,
 } from "@/src/types/ProductTypes";
 
@@ -18,6 +23,7 @@ const fieldClass =
   "w-full min-h-11 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none transition-colors focus:border-[#1DD317] focus:bg-white/15 [color-scheme:dark]";
 const labelClass =
   "mb-1.5 block text-xs font-bold uppercase tracking-[0.15em] text-white/60";
+const errorClass = "mt-1 text-xs text-red-400";
 
 const CATEGORIES = [
   { value: "1", label: "Frutas y verduras" },
@@ -36,7 +42,7 @@ export const ProductFormModal = ({
 }: {
   isOpen: boolean;
   product: Product | null;
-  onSubmit: (data: ProductFormData) => void;
+  onSubmit: (data: ProductFormInput) => void;
   onImagesChange?: (productId: number, images: ProductImage[]) => void;
   onClose: () => void;
   submitting: boolean;
@@ -70,40 +76,42 @@ const ProductFormFields = ({
   submitting,
 }: {
   product: Product | null;
-  onSubmit: (data: ProductFormData) => void;
+  onSubmit: (data: ProductFormInput) => void;
   onImagesChange?: (productId: number, images: ProductImage[]) => void;
   onClose: () => void;
   submitting: boolean;
 }) => {
   const { showToast } = useToastStore();
-  const {
-    name,
-    setName,
-    stock,
-    setStock,
-    price,
-    setPrice,
-    description,
-    setDescription,
-    category,
-    setCategory,
-    imageFiles,
-    setImageFiles,
-    handleSubmit,
-  } = useProductForm(product);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   const imageManager = useProductImages(product, onImagesChange);
   const imagesLoading = imageManager.uploading;
 
-  const onSubmitForm = (e: React.FormEvent) => {
-    const data = handleSubmit(e);
-    if (data) onSubmit(data);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProductFormInput>({
+    resolver: zodResolver(productFormSchema),
+    defaultValues: {
+      name_product: product?.name_product ?? "",
+      price: product?.price ?? 0,
+      stock: product?.stock ?? 0,
+      product_description: product?.product_description ?? "",
+      id_category: product?.id_category ?? 0,
+      product_star_rate: 0,
+      imageFiles: [],
+    },
+  });
+
+  const onSubmitForm = (data: ProductFormInput) => {
+    onSubmit(data);
   };
 
   const saveDisabled = submitting || imagesLoading;
 
   return (
-    <form onSubmit={onSubmitForm} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmitForm)} className="flex flex-col gap-4">
       <div>
         <label htmlFor="product-name" className={labelClass}>
           Nombre
@@ -111,12 +119,13 @@ const ProductFormFields = ({
         <input
           id="product-name"
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
+          {...register("name_product")}
           placeholder="Ej: Tomate chonto orgánico"
           className={fieldClass}
         />
+        {errors.name_product && (
+          <p className={errorClass}>{errors.name_product.message}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -127,14 +136,15 @@ const ProductFormFields = ({
           <input
             id="product-stock"
             type="number"
-            value={stock}
-            onChange={(e) => setStock(e.target.value)}
+            {...register("stock", { valueAsNumber: true })}
             min={0}
-            required
             inputMode="numeric"
             placeholder="0"
             className={fieldClass}
           />
+          {errors.stock && (
+            <p className={errorClass}>{errors.stock.message}</p>
+          )}
         </div>
         <div>
           <label htmlFor="product-price" className={labelClass}>
@@ -143,15 +153,16 @@ const ProductFormFields = ({
           <input
             id="product-price"
             type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            {...register("price", { valueAsNumber: true })}
             step="0.01"
             min={0}
-            required
             inputMode="decimal"
             placeholder="0.00"
             className={fieldClass}
           />
+          {errors.price && (
+            <p className={errorClass}>{errors.price.message}</p>
+          )}
         </div>
       </div>
 
@@ -161,8 +172,7 @@ const ProductFormFields = ({
         </label>
         <textarea
           id="product-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          {...register("product_description")}
           rows={3}
           placeholder="Opcional"
           className={`${fieldClass} resize-none`}
@@ -176,16 +186,14 @@ const ProductFormFields = ({
         <div className="relative">
           <select
             id="product-category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
+            {...register("id_category", { valueAsNumber: true })}
             className={`${fieldClass} appearance-none pr-10 [&>option]:text-black`}
           >
-            <option value="" disabled>
+            <option value={0} disabled>
               Selecciona una categoría
             </option>
             {CATEGORIES.map((option) => (
-              <option key={option.value} value={option.value}>
+              <option key={option.value} value={Number(option.value)}>
                 {option.label}
               </option>
             ))}
@@ -196,6 +204,9 @@ const ProductFormFields = ({
             className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#1DD317]"
           />
         </div>
+        {errors.id_category && (
+          <p className={errorClass}>{errors.id_category.message}</p>
+        )}
       </div>
 
       {product ? (
@@ -266,15 +277,19 @@ const ProductFormFields = ({
         <button
           type="submit"
           disabled={saveDisabled}
-          className="min-h-11 flex-1 rounded-xl bg-gradient-to-r from-[#284827] to-[#1DD317] px-6 py-3 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="min-h-11 flex-1 rounded-xl bg-gradient-to-r from-[#284827] to-[#1DD317] px-6 py-3 text-sm font-bold text-white transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {saveDisabled ? "Guardando…" : product ? "Guardar cambios" : "Agregar producto"}
+          {saveDisabled
+            ? "Guardando…"
+            : product
+              ? "Guardar cambios"
+              : "Agregar producto"}
         </button>
         <button
           type="button"
           onClick={onClose}
           disabled={saveDisabled}
-          className="min-h-11 rounded-xl bg-white/10 px-6 py-3 text-sm font-bold text-gray-300 transition-colors hover:bg-white/20 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          className="min-h-11 rounded-xl bg-white/10 px-6 py-3 text-sm font-bold text-gray-300 transition-colors hover:bg-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
           Cancelar
         </button>

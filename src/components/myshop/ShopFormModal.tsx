@@ -1,14 +1,21 @@
 "use client";
 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Modal } from "../ui/Modal/Modal";
-import { useShopForm } from "@/src/hooks/myshop/useShopForm";
 import { FiImage } from "react-icons/fi";
-import type { Shop, ShopFormData } from "@/src/types/ShopTypes";
+import type { Shop } from "@/src/types/ShopTypes";
+import {
+  shopFormSchema,
+  type ShopFormData,
+} from "@/src/validation/shop/ShopValidation";
 
 const fieldClass =
   "w-full min-h-11 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none transition-colors focus:border-[#1DD317] focus:bg-white/15 [color-scheme:dark]";
 const labelClass =
   "mb-1.5 block text-xs font-bold uppercase tracking-[0.15em] text-white/60";
+const errorClass = "mt-1 text-xs text-red-400";
 
 export const ShopFormModal = ({
   isOpen,
@@ -19,7 +26,7 @@ export const ShopFormModal = ({
 }: {
   isOpen: boolean;
   shop: Shop | null;
-  onSave: (data: ShopFormData) => Promise<boolean>;
+  onSave: (data: ShopFormData & { logoFile: File | null }) => Promise<boolean>;
   onClose: () => void;
   saving: boolean;
 }) => {
@@ -50,31 +57,32 @@ const ShopFormFields = ({
   saving,
 }: {
   shop: Shop | null;
-  onSave: (data: ShopFormData) => Promise<boolean>;
+  onSave: (data: ShopFormData & { logoFile: File | null }) => Promise<boolean>;
   onClose: () => void;
   saving: boolean;
 }) => {
-  const {
-    shopName,
-    setShopName,
-    description,
-    setDescription,
-    address,
-    setAddress,
-    logoFile,
-    setLogoFile,
-    handleSubmit,
-  } = useShopForm(shop);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    const data = handleSubmit(e);
-    if (!data) return;
-    const ok = await onSave(data);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ShopFormData>({
+    resolver: zodResolver(shopFormSchema),
+    defaultValues: {
+      shop_name: shop?.shop_name ?? "",
+      description: shop?.description ?? "",
+      shop_address: shop?.shop_address ?? "",
+    },
+  });
+
+  const onSubmit = async (data: ShopFormData) => {
+    const ok = await onSave({ ...data, logoFile });
     if (ok) onClose();
   };
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div>
         <label htmlFor="shop-name" className={labelClass}>
           Nombre de la tienda
@@ -82,12 +90,13 @@ const ShopFormFields = ({
         <input
           id="shop-name"
           type="text"
-          value={shopName}
-          onChange={(e) => setShopName(e.target.value)}
-          required
+          {...register("shop_name")}
           placeholder="Ej: La Huerta de Doña Rosa"
           className={fieldClass}
         />
+        {errors.shop_name && (
+          <p className={errorClass}>{errors.shop_name.message}</p>
+        )}
       </div>
 
       <div>
@@ -96,13 +105,14 @@ const ShopFormFields = ({
         </label>
         <textarea
           id="shop-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
+          {...register("description")}
           rows={3}
           placeholder="¿Qué vendes? ¿Por qué elegirte?"
           className={`${fieldClass} resize-none`}
         />
+        {errors.description && (
+          <p className={errorClass}>{errors.description.message}</p>
+        )}
       </div>
 
       <div>
@@ -112,8 +122,7 @@ const ShopFormFields = ({
         <input
           id="shop-address"
           type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          {...register("shop_address")}
           placeholder="Ej: Vía Vereda El Rosal, Km 3"
           className={fieldClass}
         />
@@ -131,7 +140,6 @@ const ShopFormFields = ({
           <input
             type="file"
             accept="image/*"
-            required={!shop}
             className="hidden"
             onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)}
           />
@@ -142,7 +150,7 @@ const ShopFormFields = ({
         <button
           type="submit"
           disabled={saving}
-          className="min-h-11 flex-1 rounded-xl bg-gradient-to-r from-[#284827] to-[#1DD317] px-6 py-3 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="min-h-11 flex-1 rounded-xl bg-gradient-to-r from-[#284827] to-[#1DD317] px-6 py-3 text-sm font-bold text-white transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {saving ? "Guardando…" : shop ? "Guardar cambios" : "Crear tienda"}
         </button>

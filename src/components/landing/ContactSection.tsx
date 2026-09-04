@@ -1,33 +1,43 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FaInstagram,
   FaWhatsapp,
   FaTelegramPlane,
 } from "react-icons/fa";
 import { useToastStore } from "@/src/stores/toastStore";
+import {
+  contactSchema,
+  type ContactFormData,
+} from "@/src/validation/contact/ContactValidation";
 
 const inputClass =
   "w-[94%] rounded-[12px] border-none bg-white/10 p-4 text-[1rem] text-white outline-none transition-all duration-300 placeholder:text-[#aaa] focus:bg-white/15 focus:shadow-[0_0_0_2px_#1DD317]";
+const errorClass = "mt-1 text-xs text-red-400 w-[94%] ml-auto";
 
 export const ContactSection = () => {
   const { showToast } = useToastStore();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || !email || !message) {
-      showToast("Por favor completa todos los campos", "error");
-      return;
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
+  });
+
+  const onSubmit = (_data: ContactFormData) => {
     showToast("¡Mensaje enviado con éxito!");
-    setName("");
-    setEmail("");
-    setMessage("");
+    reset();
   };
 
   return (
@@ -47,33 +57,43 @@ export const ContactSection = () => {
           &quot;Have questions or want to support us? Write to us here:&quot;
         </p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <input
-            type="text"
-            placeholder="Your name"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={inputClass}
-          />
-          <input
-            type="email"
-            placeholder="Your Email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={inputClass}
-          />
-          <textarea
-            placeholder="Type your message..."
-            required
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className={`${inputClass} min-h-[150px] resize-none`}
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+          <div>
+            <input
+              type="text"
+              placeholder="Your name"
+              {...register("name")}
+              className={inputClass}
+            />
+            {errors.name && (
+              <p className={errorClass}>{errors.name.message}</p>
+            )}
+          </div>
+          <div>
+            <input
+              type="email"
+              placeholder="Your Email"
+              {...register("email")}
+              className={inputClass}
+            />
+            {errors.email && (
+              <p className={errorClass}>{errors.email.message}</p>
+            )}
+          </div>
+          <div>
+            <textarea
+              placeholder="Type your message..."
+              {...register("message")}
+              className={`${inputClass} min-h-[150px] resize-none`}
+            />
+            {errors.message && (
+              <p className={errorClass}>{errors.message.message}</p>
+            )}
+          </div>
           <button
             type="submit"
-            className="rounded-[30px] border-none bg-gradient-to-r from-[#284827] to-[#1DD317] px-8 py-4 text-[1rem] font-semibold text-white transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_8px_20px_rgba(23,173,18,0.25)] sm:text-[1.1rem]"
+            disabled={isSubmitting}
+            className="rounded-[30px] border-none bg-gradient-to-r from-[#284827] to-[#1DD317] px-8 py-4 text-[1rem] font-semibold text-white transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_8px_20px_rgba(23,173,18,0.25)] disabled:cursor-not-allowed disabled:opacity-60 sm:text-[1.1rem]"
           >
             Send
           </button>
