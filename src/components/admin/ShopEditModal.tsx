@@ -1,15 +1,25 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Modal } from "../ui/Modal/Modal";
 import { FiImage } from "react-icons/fi";
-import type { Shop, ShopFormData } from "@/src/types/ShopTypes";
-import { useShopEditForm } from "@/src/hooks/admin/useShopEditForm";
+import type { Shop } from "@/src/types/ShopTypes";
+import { shopFormSchema } from "@/src/validation/shop/ShopValidation";
+
+type ShopFormInput = {
+  shop_name: string;
+  description: string;
+  shop_address: string;
+};
 
 const fieldClass =
   "w-full min-h-11 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none transition-colors focus:border-[#1DD317] focus:bg-white/15 [color-scheme:dark]";
 const labelClass =
   "mb-1.5 block text-xs font-bold uppercase tracking-[0.15em] text-white/60";
+const errorClass = "mt-1 text-xs text-red-400";
 
 export const ShopEditModal = ({
   shop,
@@ -19,23 +29,26 @@ export const ShopEditModal = ({
 }: {
   shop: Shop;
   onClose: () => void;
-  onSave: (data: ShopFormData) => void;
+  onSave: (data: ShopFormInput & { logoFile: File | null }) => void;
   saving: boolean;
 }) => {
-  const {
-    shopName,
-    setShopName,
-    description,
-    setDescription,
-    address,
-    setAddress,
-    setLogoFile,
-    handleSubmit,
-  } = useShopEditForm(shop);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
 
-  const onSubmit = (e: React.FormEvent) => {
-    const data = handleSubmit(e);
-    if (data) onSave(data);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ShopFormInput>({
+    resolver: zodResolver(shopFormSchema),
+    defaultValues: {
+      shop_name: shop.shop_name ?? "",
+      description: shop.description ?? "",
+      shop_address: shop.shop_address ?? "",
+    },
+  });
+
+  const onSubmit = (data: ShopFormInput) => {
+    onSave({ ...data, logoFile });
   };
 
   return (
@@ -45,7 +58,7 @@ export const ShopEditModal = ({
       eyebrow="Panel admin"
       title="Editar tienda"
     >
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
           <label htmlFor="admin-shop-name" className={labelClass}>
             Nombre de la tienda
@@ -53,11 +66,12 @@ export const ShopEditModal = ({
           <input
             id="admin-shop-name"
             type="text"
-            required
-            value={shopName}
-            onChange={(e) => setShopName(e.target.value)}
+            {...register("shop_name")}
             className={fieldClass}
           />
+          {errors.shop_name && (
+            <p className={errorClass}>{errors.shop_name.message}</p>
+          )}
         </div>
 
         <div>
@@ -67,10 +81,12 @@ export const ShopEditModal = ({
           <textarea
             id="admin-shop-description"
             rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register("description")}
             className={`${fieldClass} resize-none`}
           />
+          {errors.description && (
+            <p className={errorClass}>{errors.description.message}</p>
+          )}
         </div>
 
         <div>
@@ -80,8 +96,7 @@ export const ShopEditModal = ({
           <input
             id="admin-shop-address"
             type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            {...register("shop_address")}
             className={fieldClass}
           />
         </div>
@@ -123,7 +138,7 @@ export const ShopEditModal = ({
           <button
             type="submit"
             disabled={saving}
-            className="min-h-11 flex-1 rounded-xl bg-gradient-to-r from-[#284827] to-[#1DD317] px-6 py-3 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="min-h-11 flex-1 rounded-xl bg-gradient-to-r from-[#284827] to-[#1DD317] px-6 py-3 text-sm font-bold text-white transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? "Guardando…" : "Guardar cambios"}
           </button>

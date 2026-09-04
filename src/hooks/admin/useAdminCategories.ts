@@ -6,7 +6,10 @@ import {
   updateCategoryWithImage,
 } from "@/src/services/Category/CategoryServices";
 import { useToastStore } from "@/src/stores/toastStore";
-import type { Category, CategoryFormData } from "@/src/types/CategoryTypes";
+import type { Category } from "@/src/types/CategoryTypes";
+import type { CategoryFormData } from "@/src/validation/category/CategoryValidation";
+
+type CategorySaveData = CategoryFormData & { imageFile: File | null };
 
 export const useAdminCategories = () => {
   const { showToast } = useToastStore();
@@ -44,7 +47,7 @@ export const useAdminCategories = () => {
   }, []);
 
   const handleSave = useCallback(
-    async (data: CategoryFormData): Promise<boolean> => {
+    async (data: CategorySaveData): Promise<boolean> => {
       setSaving(true);
       try {
         if (editing) {

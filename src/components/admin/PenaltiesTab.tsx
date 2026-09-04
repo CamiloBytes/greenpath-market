@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FiChevronDown } from "react-icons/fi";
 import { usePenalties } from "@/src/hooks/admin/usePenalties";
+import {
+  penaltySchema,
+  type PenaltyFormData,
+} from "@/src/validation/penalty/PenaltyValidation";
 
 const fieldClass =
   "w-full min-h-11 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none transition-colors focus:border-red-400 focus:bg-white/15 [color-scheme:dark]";
 const labelClass =
   "mb-1.5 block text-xs font-bold uppercase tracking-[0.15em] text-white/60";
+const errorClass = "mt-1 text-xs text-red-400";
 
 export const PenaltiesTab = () => {
   const {
@@ -19,15 +26,38 @@ export const PenaltiesTab = () => {
     handleApplyPenalty,
   } = usePenalties();
 
-  const [reason, setReason] = useState("");
-  const [points, setPoints] = useState(10);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm<PenaltyFormData>({
+    resolver: zodResolver(penaltySchema),
+    defaultValues: {
+      id_shop: selectedShopId ?? 0,
+      reason: "",
+      points_deducted: 10,
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!reason.trim() || points <= 0 || !selectedShopId) return;
-    await handleApplyPenalty(reason.trim(), points);
-    setReason("");
-    setPoints(10);
+  const watchIdShop = watch("id_shop");
+
+  useEffect(() => {
+    if (selectedShopId) {
+      reset((prev) => ({ ...prev, id_shop: selectedShopId }));
+    }
+  }, [selectedShopId, reset]);
+
+  useEffect(() => {
+    if (watchIdShop) {
+      setSelectedShopId(watchIdShop);
+    }
+  }, [watchIdShop, setSelectedShopId]);
+
+  const onSubmit = async (data: PenaltyFormData) => {
+    await handleApplyPenalty(data.reason, data.points_deducted);
+    reset({ id_shop: data.id_shop, reason: "", points_deducted: 10 });
   };
 
   return (
@@ -44,24 +74,20 @@ export const PenaltiesTab = () => {
           <p className="text-gray-300 italic">Cargando tiendas…</p>
         ) : (
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-full rounded-2xl border border-red-400/20 bg-white/5 p-5 backdrop-blur-md sm:p-6"
           >
             <div className="mb-4">
-              <label
-                htmlFor="penalty-shop"
-                className={labelClass}
-              >
+              <label htmlFor="penalty-shop" className={labelClass}>
                 Tienda
               </label>
               <div className="relative">
                 <select
                   id="penalty-shop"
-                  value={selectedShopId ?? ""}
-                  onChange={(e) => setSelectedShopId(Number(e.target.value))}
-                  required
+                  {...register("id_shop", { valueAsNumber: true })}
                   className={`${fieldClass} appearance-none pr-10 [&>option]:bg-[#07110C]`}
                 >
+                  <option value={0}>Seleccionar tienda</option>
                   {shops.map((shop) => (
                     <option key={shop.id_shop} value={shop.id_shop}>
                       {shop.shop_name} (Score: {shop.shop_score})
@@ -74,6 +100,9 @@ export const PenaltiesTab = () => {
                   className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-red-400"
                 />
               </div>
+              {errors.id_shop && (
+                <p className={errorClass}>{errors.id_shop.message}</p>
+              )}
             </div>
 
             <div className="mb-4">
@@ -82,13 +111,14 @@ export const PenaltiesTab = () => {
               </label>
               <textarea
                 id="penalty-reason"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                required
+                {...register("reason")}
                 rows={2}
                 placeholder="Ej: El producto no llegó al cliente"
                 className={`${fieldClass} resize-none`}
               />
+              {errors.reason && (
+                <p className={errorClass}>{errors.reason.message}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
@@ -99,19 +129,20 @@ export const PenaltiesTab = () => {
                 <input
                   id="penalty-points"
                   type="number"
-                  value={points}
-                  onChange={(e) => setPoints(Number(e.target.value))}
+                  {...register("points_deducted", { valueAsNumber: true })}
                   min={1}
                   max={100}
-                  required
                   inputMode="numeric"
                   className={fieldClass}
                 />
+                {errors.points_deducted && (
+                  <p className={errorClass}>{errors.points_deducted.message}</p>
+                )}
               </div>
               <button
                 type="submit"
-                disabled={submitting || !reason.trim() || !selectedShopId}
-                className="min-h-11 flex-1 rounded-xl bg-red-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={submitting}
+                className="min-h-11 flex-1 rounded-xl bg-red-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {submitting ? "Aplicando…" : "Aplicar penalización"}
               </button>

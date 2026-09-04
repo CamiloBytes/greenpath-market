@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Modal } from "../ui/Modal/Modal";
-import type { User, UserFormData } from "@/src/types/UserTypes";
+import type { User } from "@/src/types/UserTypes";
+import {
+  userSchema,
+  type UserFormData,
+} from "@/src/validation/user/UserValidation";
 
 const fieldClass =
   "w-full min-h-11 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none transition-colors focus:border-[#1DD317] focus:bg-white/15";
 const labelClass =
   "mb-1.5 block text-xs font-bold uppercase tracking-[0.15em] text-white/60";
+const errorClass = "mt-1 text-xs text-red-400";
 
 export const UserFormModal = ({
   user,
@@ -20,35 +26,27 @@ export const UserFormModal = ({
   onSave: (data: UserFormData) => void;
   onClose: () => void;
 }) => {
-  const [fullName, setFullName] = useState(user?.full_name ?? "");
-  const [email, setEmail] = useState(user?.email ?? "");
-  const [phone, setPhone] = useState(user?.phone ?? "");
-  const [birthdate, setBirthdate] = useState(user?.birthdate ?? "");
-  const [documentNumber, setDocumentNumber] = useState(
-    user?.document_number ?? ""
-  );
-  const [password, setPassword] = useState("");
-  const [address, setAddress] = useState(user?.user_address ?? "");
-  const [idRol, setIdRol] = useState(user?.id_rol ?? 1);
-  const [idDocumentType, setIdDocumentType] = useState(
-    user?.id_document_type ?? 1
-  );
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      full_name: user?.full_name ?? "",
+      email: user?.email ?? "",
+      phone: user?.phone ?? "",
+      birthdate: user?.birthdate ?? "",
+      id_document_type: user?.id_document_type ?? 1,
+      document_number: user?.document_number ?? "",
+      user_password: "",
+      id_rol: user?.id_rol ?? 1,
+      user_address: user?.user_address ?? "",
+    },
+  });
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!fullName.trim() || !email.trim()) return;
-
-    onSave({
-      full_name: fullName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      birthdate,
-      document_number: documentNumber.trim(),
-      user_password: password,
-      id_rol: idRol,
-      id_document_type: idDocumentType,
-      user_address: address.trim() || undefined,
-    });
+  const onSubmit = (data: UserFormData) => {
+    onSave(data);
   };
 
   return (
@@ -58,7 +56,7 @@ export const UserFormModal = ({
       eyebrow="Panel admin"
       title={user ? "Editar usuario" : "Nuevo usuario"}
     >
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
           <label htmlFor="user-name" className={labelClass}>
             Nombre completo
@@ -66,12 +64,13 @@ export const UserFormModal = ({
           <input
             id="user-name"
             type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
+            {...register("full_name")}
             placeholder="Ej: Juan Pérez"
             className={fieldClass}
           />
+          {errors.full_name && (
+            <p className={errorClass}>{errors.full_name.message}</p>
+          )}
         </div>
 
         <div>
@@ -81,12 +80,13 @@ export const UserFormModal = ({
           <input
             id="user-email"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            {...register("email")}
             placeholder="juan@ejemplo.com"
             className={fieldClass}
           />
+          {errors.email && (
+            <p className={errorClass}>{errors.email.message}</p>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -97,12 +97,13 @@ export const UserFormModal = ({
             <input
               id="user-phone"
               type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
+              {...register("phone")}
               placeholder="3001234567"
               className={fieldClass}
             />
+            {errors.phone && (
+              <p className={errorClass}>{errors.phone.message}</p>
+            )}
           </div>
           <div>
             <label htmlFor="user-birthdate" className={labelClass}>
@@ -111,11 +112,12 @@ export const UserFormModal = ({
             <input
               id="user-birthdate"
               type="date"
-              value={birthdate}
-              onChange={(e) => setBirthdate(e.target.value)}
-              required
+              {...register("birthdate")}
               className={fieldClass}
             />
+            {errors.birthdate && (
+              <p className={errorClass}>{errors.birthdate.message}</p>
+            )}
           </div>
         </div>
 
@@ -126,8 +128,7 @@ export const UserFormModal = ({
             </label>
             <select
               id="user-doc-type"
-              value={idDocumentType}
-              onChange={(e) => setIdDocumentType(Number(e.target.value))}
+              {...register("id_document_type", { valueAsNumber: true })}
               className={fieldClass}
             >
               <option value={1}>CC</option>
@@ -144,12 +145,13 @@ export const UserFormModal = ({
             <input
               id="user-doc-number"
               type="text"
-              value={documentNumber}
-              onChange={(e) => setDocumentNumber(e.target.value)}
-              required
+              {...register("document_number")}
               placeholder="1012345678"
               className={fieldClass}
             />
+            {errors.document_number && (
+              <p className={errorClass}>{errors.document_number.message}</p>
+            )}
           </div>
         </div>
 
@@ -159,8 +161,7 @@ export const UserFormModal = ({
           </label>
           <select
             id="user-role"
-            value={idRol}
-            onChange={(e) => setIdRol(Number(e.target.value))}
+            {...register("id_rol", { valueAsNumber: true })}
             className={fieldClass}
           >
             <option value={1}>Cliente</option>
@@ -177,12 +178,13 @@ export const UserFormModal = ({
             <input
               id="user-password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required={!user}
+              {...register("user_password")}
               placeholder="Mínimo 6 caracteres"
               className={fieldClass}
             />
+            {errors.user_password && (
+              <p className={errorClass}>{errors.user_password.message}</p>
+            )}
           </div>
         )}
 
@@ -193,8 +195,7 @@ export const UserFormModal = ({
           <input
             id="user-address"
             type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            {...register("user_address")}
             placeholder="Cra 10 # 12-34"
             className={fieldClass}
           />
