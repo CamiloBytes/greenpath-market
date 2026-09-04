@@ -1,14 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiLoader, FiCamera } from "react-icons/fi";
 import { motion } from "framer-motion";
 import type { UserProfile } from "@/src/services/Auth/AuthServices";
 import type { ProfileView } from "@/src/types/ProfileTypes";
 import { useAuthStore } from "@/src/stores/authStore";
+import { IMAGE_ACCEPT_ATTR } from "@/src/utils/imageUpload";
 
 export const ProfileSidebar = ({
   profile,
+  avatarUrl,
+  uploadingAvatar,
+  onAvatarUpload,
   activeView,
   onSelectView,
   editingName,
@@ -20,6 +24,9 @@ export const ProfileSidebar = ({
   onLogout,
 }: {
   profile: UserProfile | null;
+  avatarUrl: string;
+  uploadingAvatar: boolean;
+  onAvatarUpload: (file: File) => void;
   activeView: ProfileView;
   onSelectView: (view: ProfileView) => void;
   editingName: boolean;
@@ -40,13 +47,36 @@ export const ProfileSidebar = ({
 
   return (
     <aside className="flex w-full flex-col items-center gap-4 rounded-2xl bg-[#37963d2d] p-6 backdrop-blur-md md:w-[250px] md:min-w-[250px]">
-      <Image
-        src="https://res.cloudinary.com/dd7vy0y6n/image/upload/v1756505801/photo-profile_1_oazfvi.jpg"
-        alt="Foto de perfil"
-        width={120}
-        height={120}
-        className="h-[120px] w-[120px] rounded-full border-4 border-[#1DD317] object-cover"
-      />
+      <div className="relative">
+        <Image
+          src={avatarUrl}
+          alt={profile?.full_name ?? "Foto de perfil"}
+          width={120}
+          height={120}
+          loading="lazy"
+          unoptimized={avatarUrl.startsWith("http")}
+          className="h-[120px] w-[120px] rounded-full border-4 border-[#1DD317] object-cover"
+        />
+        <label className="absolute -bottom-1 -right-1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gradient-to-r from-[#284827] to-[#1DD317] text-[#07110C] shadow-lg transition-transform hover:scale-105">
+          {uploadingAvatar ? (
+            <FiLoader className="animate-spin" />
+          ) : (
+            <FiCamera size={16} />
+          )}
+          <span className="sr-only">Cambiar foto de perfil</span>
+          <input
+            type="file"
+            accept={IMAGE_ACCEPT_ATTR}
+            className="hidden"
+            disabled={uploadingAvatar}
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              e.target.value = "";
+              if (file) onAvatarUpload(file);
+            }}
+          />
+        </label>
+      </div>
 
       <div className="flex w-full items-center justify-center gap-2">
         {editingName ? (

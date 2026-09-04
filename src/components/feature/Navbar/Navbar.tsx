@@ -5,6 +5,7 @@ import { FiLogOut, FiShoppingCart } from "react-icons/fi";
 import { IoMdPerson } from "react-icons/io";
 import { FaShop, FaUserTie } from "react-icons/fa6";
 import { GiGreenhouse } from "react-icons/gi";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/src/stores/authStore";
@@ -97,7 +98,19 @@ export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => 
             </Link>
 
             <div className="flex items-center gap-2 text-white">
-              <IoMdPerson className="text-xl" />
+              {user?.avatar_url ? (
+                <Image
+                  src={user.avatar_url}
+                  alt={user.full_name ?? "Foto de perfil"}
+                  width={28}
+                  height={28}
+                  loading="lazy"
+                  unoptimized={user.avatar_url.startsWith("http")}
+                  className="h-7 w-7 rounded-full object-cover"
+                />
+              ) : (
+                <IoMdPerson className="text-xl" />
+              )}
               {loading ? (
                 <span className="text-sm text-white/70">Cargando...</span>
               ) : user?.email ? (

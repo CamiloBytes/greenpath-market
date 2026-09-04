@@ -20,8 +20,41 @@ export interface UserProfile {
   document_number: string;
   id_rol: number;
   user_address?: string;
+  avatar_url?: string | null;
+  avatar_public_id?: string | null;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface AvatarUploadResponse {
+  avatar_url?: string;
+  avatar_public_id?: string;
+  url?: string;
+  secure_url?: string;
+}
+
+export async function uploadAvatar(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  const data = await apiRequest<unknown>("/users/me/avatar", {
+    method: "POST",
+    formData,
+  });
+
+  if (typeof data === "string") return data;
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    if (typeof obj.avatar_url === "string") return obj.avatar_url;
+    if (typeof obj.url === "string") return obj.url;
+    if (typeof obj.secure_url === "string") return obj.secure_url;
+    if (obj.detail && typeof obj.detail === "object") {
+      const detail = obj.detail as Record<string, unknown>;
+      if (typeof detail.avatar_url === "string") return detail.avatar_url;
+      if (typeof detail.url === "string") return detail.url;
+    }
+  }
+  throw new Error("No se pudo subir la imagen");
 }
 
 export interface RegisterFormPayload {

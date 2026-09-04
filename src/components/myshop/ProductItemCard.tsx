@@ -27,6 +27,7 @@ export const ProductItemCard = ({
           src={product.image_url}
           alt={product.name_product}
           fill
+          loading="lazy"
           unoptimized={product.image_url.startsWith("http")}
           className="absolute inset-0 object-cover"
         />

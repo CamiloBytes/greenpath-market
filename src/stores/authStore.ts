@@ -16,6 +16,7 @@ export interface AuthUser {
   full_name?: string;
   email?: string;
   role_id?: number;
+  avatar_url?: string | null;
 }
 
 const USER_KEY = "auth_user";
@@ -38,9 +39,10 @@ interface AuthState {
   login: (token: string, user: AuthUser) => void;
   logout: () => void;
   hydrate: () => void;
+  updateAvatar: (avatarUrl: string) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   loading: true,
   hydrated: false,
@@ -74,6 +76,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     clearToken();
     window.localStorage.removeItem(USER_KEY);
     set({ user: null });
+  },
+
+  updateAvatar: (avatarUrl) => {
+    const nextUser = { ...get().user, avatar_url: avatarUrl };
+    set({ user: nextUser });
+    if (nextUser?.id_user) {
+      window.localStorage.setItem(USER_KEY, JSON.stringify(nextUser));
+    }
   },
 }));
 

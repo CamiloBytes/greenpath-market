@@ -11,6 +11,9 @@ import { SellerRequestView } from "./SellerRequestView";
 export const ProfilePage = () => {
   const {
     profile,
+    avatarUrl,
+    uploadingAvatar,
+    handleAvatarUpload,
     activeView,
     setActiveView,
     editingField,
@@ -33,6 +36,9 @@ export const ProfilePage = () => {
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 md:flex-row md:items-start">
       <ProfileSidebar
         profile={profile}
+        avatarUrl={avatarUrl}
+        uploadingAvatar={uploadingAvatar}
+        onAvatarUpload={handleAvatarUpload}
         activeView={activeView ?? "pedidos"}
         onSelectView={(view) => {
           if (view === "logout") {

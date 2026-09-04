@@ -1,9 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import { Modal } from "../ui/Modal/Modal";
 import { useProductForm } from "@/src/hooks/myshop/useProductForm";
-import { FiChevronDown, FiImage } from "react-icons/fi";
-import type { Product, ProductFormData } from "@/src/types/ProductTypes";
+import { useProductImages } from "@/src/hooks/myshop/useProductImages";
+import { ImageUploader } from "../ui/ImageUploader";
+import { FiChevronDown, FiLoader, FiTrash2, FiRefreshCw } from "react-icons/fi";
+import { useToastStore } from "@/src/stores/toastStore";
+import { IMAGE_ACCEPT_ATTR, validateImageFile } from "@/src/utils/imageUpload";
+import type {
+  Product,
+  ProductFormData,
+  ProductImage,
+} from "@/src/types/ProductTypes";
 
 const fieldClass =
   "w-full min-h-11 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none transition-colors focus:border-[#1DD317] focus:bg-white/15 [color-scheme:dark]";
@@ -21,12 +30,14 @@ export const ProductFormModal = ({
   isOpen,
   product,
   onSubmit,
+  onImagesChange,
   onClose,
   submitting,
 }: {
   isOpen: boolean;
   product: Product | null;
   onSubmit: (data: ProductFormData) => void;
+  onImagesChange?: (productId: number, images: ProductImage[]) => void;
   onClose: () => void;
   submitting: boolean;
 }) => {
@@ -42,6 +53,7 @@ export const ProductFormModal = ({
           key={product?.id_product ?? "new"}
           product={product}
           onSubmit={onSubmit}
+          onImagesChange={onImagesChange}
           onClose={onClose}
           submitting={submitting}
         />
@@ -53,14 +65,17 @@ export const ProductFormModal = ({
 const ProductFormFields = ({
   product,
   onSubmit,
+  onImagesChange,
   onClose,
   submitting,
 }: {
   product: Product | null;
   onSubmit: (data: ProductFormData) => void;
+  onImagesChange?: (productId: number, images: ProductImage[]) => void;
   onClose: () => void;
   submitting: boolean;
 }) => {
+  const { showToast } = useToastStore();
   const {
     name,
     setName,
@@ -72,15 +87,20 @@ const ProductFormFields = ({
     setDescription,
     category,
     setCategory,
-    imageFile,
-    setImageFile,
+    imageFiles,
+    setImageFiles,
     handleSubmit,
   } = useProductForm(product);
+
+  const imageManager = useProductImages(product, onImagesChange);
+  const imagesLoading = imageManager.uploading;
 
   const onSubmitForm = (e: React.FormEvent) => {
     const data = handleSubmit(e);
     if (data) onSubmit(data);
   };
+
+  const saveDisabled = submitting || imagesLoading;
 
   return (
     <form onSubmit={onSubmitForm} className="flex flex-col gap-4">
@@ -178,44 +198,161 @@ const ProductFormFields = ({
         </div>
       </div>
 
-      <div>
-        <span className={labelClass}>Imagen</span>
-        {product ? (
-          <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/50">
-            La imagen no puede cambiarse después de crear el producto.
-          </p>
-        ) : (
-          <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-dashed border-[#1DD317]/40 bg-white/5 px-4 py-3 text-sm text-white/70 transition-colors hover:border-[#1DD317] hover:bg-white/10">
-            <FiImage className="shrink-0 text-[#1DD317]" />
-            <span className="truncate">
-              {imageFile ? imageFile.name : "Selecciona una imagen"}
-            </span>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
-            />
-          </label>
-        )}
-      </div>
+      {product ? (
+        <div className="flex flex-col gap-3">
+          <span className={labelClass}>Imágenes</span>
+
+          {imageManager.images.length > 0 ? (
+            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {imageManager.images.map((img, index) => (
+                <ExistingImageItem
+                  key={img.id}
+                  image={img}
+                  isMain={index === 0}
+                  busy={imageManager.busyIds.includes(img.id)}
+                  onReplace={(file) => imageManager.replaceImage(img.id, file)}
+                  onDelete={() => {
+                    if (
+                      window.confirm("¿Estás seguro de eliminar esta imagen?")
+                    ) {
+                      imageManager.removeImage(img.id);
+                    }
+                  }}
+                />
+              ))}
+            </ul>
+          ) : product.image_url ? (
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-black/30">
+                <Image
+                  src={product.image_url}
+                  alt={product.name_product}
+                  fill
+                  unoptimized={product.image_url.startsWith("http")}
+                  className="object-cover"
+                />
+              </div>
+              <p className="text-xs text-white/50">
+                Imagen principal actual del producto.
+              </p>
+            </div>
+          ) : null}
+
+          <ImageUploader
+            multiple
+            label="Agregar imágenes"
+            files={imageFiles}
+            onFilesChange={setImageFiles}
+            onUpload={async (file) => {
+              await imageManager.addFiles([file]);
+            }}
+            onError={(message) => showToast(message, "error")}
+          />
+        </div>
+      ) : (
+        <div>
+          <ImageUploader
+            multiple
+            label="Imágenes"
+            helperText="Puedes agregar varias imágenes. La primera será la principal."
+            files={imageFiles}
+            onFilesChange={setImageFiles}
+            onError={(message) => showToast(message, "error")}
+          />
+        </div>
+      )}
 
       <div className="mt-2 flex flex-col gap-3 sm:flex-row">
         <button
           type="submit"
-          disabled={submitting}
+          disabled={saveDisabled}
           className="min-h-11 flex-1 rounded-xl bg-gradient-to-r from-[#284827] to-[#1DD317] px-6 py-3 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {submitting ? "Guardando…" : product ? "Guardar cambios" : "Agregar producto"}
+          {saveDisabled ? "Guardando…" : product ? "Guardar cambios" : "Agregar producto"}
         </button>
         <button
           type="button"
           onClick={onClose}
-          className="min-h-11 rounded-xl bg-white/10 px-6 py-3 text-sm font-bold text-gray-300 transition-colors hover:bg-white/20 hover:text-white"
+          disabled={saveDisabled}
+          className="min-h-11 rounded-xl bg-white/10 px-6 py-3 text-sm font-bold text-gray-300 transition-colors hover:bg-white/20 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancelar
         </button>
       </div>
     </form>
+  );
+};
+
+const ExistingImageItem = ({
+  image,
+  isMain,
+  busy,
+  onReplace,
+  onDelete,
+}: {
+  image: ProductImage;
+  isMain: boolean;
+  busy: boolean;
+  onReplace: (file: File) => void;
+  onDelete: () => void;
+}) => {
+  const { showToast } = useToastStore();
+
+  const handleReplace = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    e.target.value = "";
+    if (!file) return;
+    const error = validateImageFile(file);
+    if (error) {
+      showToast(error, "error");
+      return;
+    }
+    onReplace(file);
+  };
+
+  return (
+    <li className="relative flex flex-col gap-2 rounded-xl border border-white/10 bg-white/5 p-2">
+      <div className="relative h-20 w-full overflow-hidden rounded-lg bg-black/30">
+        <Image
+          src={image.image_url}
+          alt="Imagen del producto"
+          fill
+          unoptimized={image.image_url.startsWith("http")}
+          className="object-cover"
+        />
+        {isMain && (
+          <span className="absolute left-1.5 top-1.5 rounded-full bg-[#1DD317] px-2 py-0.5 text-[10px] font-bold text-[#07110C]">
+            Principal
+          </span>
+        )}
+        {busy && (
+          <span className="absolute inset-0 flex items-center justify-center bg-black/50">
+            <FiLoader className="animate-spin text-[#1DD317]" />
+          </span>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between gap-1">
+        <label className="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg bg-white/10 text-[11px] font-semibold text-white transition-colors hover:bg-white/20">
+          <FiRefreshCw size={12} /> Reemplazar
+          <input
+            type="file"
+            accept={IMAGE_ACCEPT_ATTR}
+            className="hidden"
+            disabled={busy}
+            onChange={handleReplace}
+          />
+        </label>
+        <button
+          type="button"
+          onClick={onDelete}
+          disabled={busy}
+          aria-label="Eliminar imagen"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20 text-red-300 transition-colors hover:bg-red-500/40 disabled:opacity-50"
+        >
+          <FiTrash2 size={13} />
+        </button>
+      </div>
+    </li>
   );
 };

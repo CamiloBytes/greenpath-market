@@ -1,20 +1,28 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import { FiImage } from "react-icons/fi";
 import { useSellerRequest } from "@/src/hooks/profile/useSellerRequest";
 import { useAuthStore } from "@/src/stores/authStore";
+import { useToastStore } from "@/src/stores/toastStore";
+import { uploadSellerRequestLogo } from "@/src/services/Seller/SellerRequestServices";
+import { DEFAULT_AVATAR_URL } from "@/src/constants/images";
 import Link from "next/link";
 
 export const SellerRequestView = () => {
   const { user } = useAuthStore();
+  const { showToast } = useToastStore();
   const { request, loading, submitting, submitRequest } = useSellerRequest();
   const [form, setForm] = useState({
     shopName: "",
     description: "",
     address: "",
-    logoUrl: "",
     reason: "",
   });
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -26,15 +34,33 @@ export const SellerRequestView = () => {
     e.preventDefault();
     if (!form.shopName || !form.description || !form.address || !form.reason) return;
 
-    await submitRequest({
-      shop_name: form.shopName,
-      description: form.description,
-      shop_address: form.address,
-      logo_url: form.logoUrl || "https://res.cloudinary.com/dd7vy0y6n/image/upload/v1756505801/photo-profile_1_oazfvi.jpg",
-      why_seller: form.reason,
-    });
+    setUploading(true);
+    try {
+      let logo_url: string = DEFAULT_AVATAR_URL;
+      if (logoFile) {
+        logo_url = await uploadSellerRequestLogo(logoFile);
+      }
 
-    setForm({ shopName: "", description: "", address: "", logoUrl: "", reason: "" });
+      await submitRequest({
+        shop_name: form.shopName,
+        description: form.description,
+        shop_address: form.address,
+        logo_url,
+        why_seller: form.reason,
+      });
+
+      setForm({ shopName: "", description: "", address: "", reason: "" });
+      setLogoFile(null);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    } catch (err) {
+      showToast(
+        err instanceof Error ? err.message : "Error al subir la imagen",
+        "error"
+      );
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (loading) {
@@ -229,17 +255,41 @@ export const SellerRequestView = () => {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-white">
-            Logo de la tienda (URL):
+          <span className="mb-1 block text-sm font-medium text-white">
+            Logo de la tienda (opcional)
+          </span>
+          <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-[#1DD317]/40 bg-white/5 px-4 py-2.5 text-sm text-white/70 transition-colors hover:border-[#1DD317] hover:bg-white/10">
+            <FiImage className="shrink-0 text-[#1DD317]" />
+            <span className="truncate">
+              {logoFile ? logoFile.name : "Selecciona una imagen"}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                setLogoFile(file);
+                if (previewUrl) URL.revokeObjectURL(previewUrl);
+                setPreviewUrl(file ? URL.createObjectURL(file) : null);
+              }}
+            />
           </label>
-          <input
-            type="url"
-            name="logoUrl"
-            value={form.logoUrl}
-            onChange={handleChange}
-            placeholder="https://ejemplo.com/logo.png (opcional)"
-            className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-gray-400 outline-none focus:border-[#1DD317] transition-colors"
-          />
+          {previewUrl && (
+            <div className="mt-3 flex items-center gap-3 rounded-lg bg-white/5 p-3">
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full">
+                <Image
+                  src={previewUrl}
+                  alt="Vista previa del logo"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <p className="text-xs text-gray-300">
+                La imagen se subirá a Cloudinary cuando envíes la solicitud.
+              </p>
+            </div>
+          )}
         </div>
 
         <div>
@@ -258,10 +308,14 @@ export const SellerRequestView = () => {
 
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || uploading}
           className="mt-2 w-full rounded-xl bg-[#1DD317] px-6 py-3 text-sm font-bold text-[#07110C] transition-colors hover:bg-[#16a813] disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {submitting ? "Enviando solicitud..." : "Enviar Solicitud"}
+          {uploading
+            ? "Subiendo imagen..."
+            : submitting
+              ? "Enviando solicitud..."
+              : "Enviar Solicitud"}
         </button>
       </form>
     </div>

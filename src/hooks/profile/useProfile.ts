@@ -2,13 +2,19 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useToastStore } from "@/src/stores/toastStore";
-import { getProfile, updateUser } from "@/src/services/Auth/AuthServices";
+import {
+  getProfile,
+  updateUser,
+  uploadAvatar,
+} from "@/src/services/Auth/AuthServices";
 import type { UserProfile } from "@/src/services/Auth/AuthServices";
 import type { ProfileView } from "@/src/types/ProfileTypes";
+import { mapUploadError, validateImageFile } from "@/src/utils/imageUpload";
+import { DEFAULT_AVATAR_URL } from "@/src/constants/images";
 
 export const useProfile = () => {
   const router = useRouter();
-  const { logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const { showToast } = useToastStore();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -17,6 +23,10 @@ export const useProfile = () => {
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  const avatarUrl =
+    profile?.avatar_url ?? user?.avatar_url ?? DEFAULT_AVATAR_URL;
 
   const loadProfile = useCallback(async () => {
     try {
@@ -106,6 +116,29 @@ export const useProfile = () => {
     setFieldValues((prev) => ({ ...prev, [field]: value }));
   }, []);
 
+  const handleAvatarUpload = useCallback(
+    async (file: File) => {
+      const validationError = validateImageFile(file);
+      if (validationError) {
+        showToast(validationError, "error");
+        return;
+      }
+
+      setUploadingAvatar(true);
+      try {
+        const avatar_url = await uploadAvatar(file);
+        setProfile((prev) => (prev ? { ...prev, avatar_url } : prev));
+        useAuthStore.getState().updateAvatar(avatar_url);
+        showToast("Foto de perfil actualizada");
+      } catch (err) {
+        showToast(mapUploadError(err), "error");
+      } finally {
+        setUploadingAvatar(false);
+      }
+    },
+    [showToast]
+  );
+
   const handleLogout = useCallback(async () => {
     await logout();
     router.push("/auth");
@@ -116,6 +149,9 @@ export const useProfile = () => {
 
   return {
     profile,
+    avatarUrl,
+    uploadingAvatar,
+    handleAvatarUpload,
     activeView,
     setActiveView,
     editingField,
