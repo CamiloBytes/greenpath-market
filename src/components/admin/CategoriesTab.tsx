@@ -100,14 +100,20 @@ const CategoryAdminCard = ({
       className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md"
     >
       <div className="relative h-36 w-full overflow-hidden">
-        <Image
-          src={category.image_url}
-          alt={category.category_name}
-          fill
-          loading="lazy"
-          unoptimized={category.image_url.startsWith("http")}
-          className="object-cover"
-        />
+        {category.image_url ? (
+          <Image
+            src={category.image_url}
+            alt={category.category_name}
+            fill
+            loading="lazy"
+            unoptimized={category.image_url.startsWith("http")}
+            className="object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-white/10 text-white/40">
+            Sin imagen
+          </div>
+        )}
       </div>
       <div className="flex flex-1 items-center justify-between gap-2 p-4">
         <h4 className="text-sm font-bold text-white">

@@ -3,7 +3,6 @@ import {
   createCategoryWithImage,
   deleteCategory,
   getCategories,
-  updateCategory,
   updateCategoryWithImage,
 } from "@/src/services/Category/CategoryServices";
 import { useToastStore } from "@/src/stores/toastStore";
@@ -49,26 +48,18 @@ export const useAdminCategories = () => {
       setSaving(true);
       try {
         if (editing) {
-          if (data.imageFile) {
-            const formData = new FormData();
-            formData.append("category_name", data.category_name);
-            formData.append("image", data.imageFile);
-            await updateCategoryWithImage(editing.id_category, formData);
-          } else {
-            await updateCategory(editing.id_category, {
-              category_name: data.category_name,
-            });
-          }
+          await updateCategoryWithImage(
+            editing.id_category,
+            data.category_name,
+            data.imageFile ?? undefined
+          );
           showToast("Categoría actualizada exitosamente");
         } else {
           if (!data.imageFile) {
             showToast("Debes seleccionar una imagen", "error");
             return false;
           }
-          const formData = new FormData();
-          formData.append("category_name", data.category_name);
-          formData.append("image", data.imageFile);
-          await createCategoryWithImage(formData);
+          await createCategoryWithImage(data.category_name, data.imageFile);
           showToast("Categoría creada exitosamente");
         }
 

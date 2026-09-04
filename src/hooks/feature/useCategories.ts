@@ -7,7 +7,7 @@ import { getCategories } from "@/src/services/Category/CategoryServices";
 export interface CategoryOption {
   id: number;
   title: string;
-  image: string;
+  image: string | null;
 }
 
 export const useCategories = (includeAll = false) => {

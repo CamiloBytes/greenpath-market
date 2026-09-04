@@ -61,13 +61,19 @@ export const CategoryFormModal = ({
             <span className={labelClass}>Imagen actual</span>
             <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2">
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-black/30">
-                <Image
-                  src={category.image_url}
-                  alt={category.category_name}
-                  fill
-                  unoptimized={category.image_url.startsWith("http")}
-                  className="object-cover"
-                />
+                {category.image_url ? (
+                  <Image
+                    src={category.image_url}
+                    alt={category.category_name}
+                    fill
+                    unoptimized={category.image_url.startsWith("http")}
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-xs text-white/40">
+                    N/A
+                  </div>
+                )}
               </div>
               <p className="text-xs text-white/50">
                 Imagen actual de la categoría

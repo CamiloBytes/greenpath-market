@@ -18,48 +18,41 @@ export async function getCategories(): Promise<Category[]> {
   return extractList<Category>(data);
 }
 
-export interface CategoryPayload {
-  category_name: string;
-}
-
-export async function createCategory(data: CategoryPayload): Promise<Category> {
-  return apiRequest<Category>("/categories", {
-    method: "POST",
-    body: data,
-  });
+export async function getCategoryById(id: number): Promise<Category> {
+  return apiRequest<Category>(`/categories/${id}`);
 }
 
 export async function createCategoryWithImage(
-  formData: FormData
+  categoryName: string,
+  image: File
 ): Promise<Category> {
+  const formData = new FormData();
+  formData.append("category_name", categoryName);
+  formData.append("image", image);
+
   return apiRequest<Category>("/categories/upload", {
     method: "POST",
     formData,
   });
 }
 
-export async function updateCategory(
-  id: number,
-  data: CategoryPayload
-): Promise<Category> {
-  return apiRequest<Category>(`/categories/${id}`, {
-    method: "PUT",
-    body: data,
-  });
-}
-
 export async function updateCategoryWithImage(
-  id: number,
-  formData: FormData
+  categoryId: number,
+  categoryName?: string,
+  image?: File
 ): Promise<Category> {
-  return apiRequest<Category>(`/categories/upload/${id}`, {
+  const formData = new FormData();
+  if (categoryName) formData.append("category_name", categoryName);
+  if (image) formData.append("image", image);
+
+  return apiRequest<Category>(`/categories/upload/${categoryId}`, {
     method: "PUT",
     formData,
   });
 }
 
-export async function deleteCategory(id: number): Promise<void> {
-  return apiRequest<void>(`/categories/${id}`, {
+export async function deleteCategory(categoryId: number): Promise<void> {
+  return apiRequest<void>(`/categories/${categoryId}`, {
     method: "DELETE",
   });
 }
