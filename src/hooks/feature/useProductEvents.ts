@@ -29,7 +29,7 @@ export const useProductEvents = ({
 
   useEffect(() => {
     const source = new EventSource(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/stream`
+      `${process.env.API_URL}/products/stream`
     );
 
     source.onmessage = (event) => {
