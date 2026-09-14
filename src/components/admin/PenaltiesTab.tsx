@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FiChevronDown } from "react-icons/fi";
 import { usePenalties } from "@/src/hooks/admin/usePenalties";
@@ -29,9 +29,9 @@ export const PenaltiesTab = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     reset,
-    watch,
   } = useForm<PenaltyFormData>({
     resolver: zodResolver(penaltySchema),
     defaultValues: {
@@ -41,7 +41,7 @@ export const PenaltiesTab = () => {
     },
   });
 
-  const watchIdShop = watch("id_shop");
+  const watchIdShop = useWatch({ control, name: "id_shop" });
 
   useEffect(() => {
     if (selectedShopId) {
