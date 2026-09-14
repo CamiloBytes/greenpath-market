@@ -1,4 +1,5 @@
 import "./globals.css";
+import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import { Poppins, Bricolage_Grotesque } from "next/font/google";
 import { HydrationListener } from "@/src/components/ui/HydrationListener";
@@ -29,7 +30,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="es"

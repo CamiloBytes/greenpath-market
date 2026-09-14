@@ -29,7 +29,7 @@ export const ProductForm = ({
     setDescription,
     category,
     setCategory,
-    setImageFile,
+    setImageFiles,
     handleSubmit,
   } = useProductForm(product);
 
@@ -81,7 +81,7 @@ export const ProductForm = ({
           type="file"
           accept="image/*"
           disabled={!!product}
-          onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+          onChange={(e) => setImageFiles(e.target.files ? [e.target.files[0]] : [])}
           className="w-full text-sm text-white/80 file:mr-3 file:rounded-lg file:border-0 file:bg-[#284827] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white disabled:opacity-40"
         />
         <select
