@@ -35,7 +35,7 @@ export const ContactSection = () => {
     },
   });
 
-  const onSubmit = (_data: ContactFormData) => {
+  const onSubmit = () => {
     showToast("¡Mensaje enviado con éxito!");
     reset();
   };
