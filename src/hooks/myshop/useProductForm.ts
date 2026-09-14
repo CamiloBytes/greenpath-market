@@ -49,6 +49,7 @@ export const useProductForm = (product: Product | null) => {
     setCategory,
     imageFiles,
     setImageFiles,
+    setImageFile: (file: File | null) => setImageFiles(file ? [file] : []),
     handleSubmit,
   };
 };
