@@ -11,7 +11,7 @@ export const useProductForm = (product: Product | null) => {
   const [category, setCategory] = useState(
     product?.id_category?.toString() ?? ""
   );
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   const handleSubmit = (e: React.FormEvent): ProductFormData | null => {
     e.preventDefault();
@@ -32,7 +32,7 @@ export const useProductForm = (product: Product | null) => {
       price: Number(price),
       product_description: description.trim(),
       id_category: Number(category),
-      imageFile,
+      imageFiles,
     };
   };
 
@@ -47,8 +47,8 @@ export const useProductForm = (product: Product | null) => {
     setDescription,
     category,
     setCategory,
-    imageFile,
-    setImageFile,
+    imageFiles,
+    setImageFiles,
     handleSubmit,
   };
 };

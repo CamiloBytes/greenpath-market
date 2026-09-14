@@ -54,13 +54,13 @@ export const SettingsSection = ({
               <div className="flex gap-2">
                 <button
                   onClick={() => onSaveField(field.key)}
-                  className="rounded-lg bg-[#1DD317] px-3 py-1.5 text-xs font-bold text-[#07110C] hover:bg-[#20B11B] transition-colors"
+                  className="min-h-11 rounded-lg bg-[#1DD317] px-3 py-2 text-xs font-bold text-[#07110C] hover:bg-[#20B11B] transition-colors"
                 >
                   Guardar
                 </button>
                 <button
                   onClick={() => onCancelEdit(field.key)}
-                  className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-bold text-gray-300 hover:bg-white/20 transition-colors"
+                  className="min-h-11 rounded-lg bg-white/10 px-3 py-2 text-xs font-bold text-gray-300 hover:bg-white/20 transition-colors"
                 >
                   Cancelar
                 </button>
@@ -70,7 +70,7 @@ export const SettingsSection = ({
                 <button
                   onClick={() => onStartEdit(field.key)}
                   aria-label={`Editar ${field.label}`}
-                  className="text-sm text-white/60 hover:text-[#1DD317] transition-colors"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center text-sm text-white/60 hover:text-[#1DD317] transition-colors"
                 >
                   <FaPenToSquare size={16} />
                 </button>

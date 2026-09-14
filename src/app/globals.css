@@ -67,8 +67,21 @@
 }
 
 /* FONTS */
+html,
 body {
+    min-height: 100%;
+    width: 100%;
+    background-color: #07110C;
+}
+
+body {
+    margin: 0;
+    overflow-x: clip;
     font-family: 'Poppins', sans-serif;
+}
+
+.font-display {
+    font-family: var(--font-display), 'Poppins', sans-serif;
 }
 
 html {

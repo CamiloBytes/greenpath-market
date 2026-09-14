@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { useToast } from "@/src/context/ToastContext";
+import { useToastStore } from "@/src/stores/toastStore";
+import { UnauthorizedError } from "@/src/services/apiClient";
 import {
   getSellerRequests,
   approveSellerRequest,
@@ -11,7 +12,7 @@ import type {
 } from "@/src/types/SellerRequestTypes";
 
 export const useSellerRequests = () => {
-  const { showToast } = useToast();
+  const { showToast } = useToastStore();
   const [requests, setRequests] = useState<SellerRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState<number | null>(null);
@@ -21,7 +22,9 @@ export const useSellerRequests = () => {
     try {
       const data = await getSellerRequests({ status: "pending" });
       setRequests(data);
-    } catch {
+    } catch (error) {
+      if (error instanceof UnauthorizedError) return;
+      console.error("Error al cargar solicitudes:", error);
       showToast("Error al cargar las solicitudes", "error");
     } finally {
       setLoading(false);
@@ -44,7 +47,8 @@ export const useSellerRequests = () => {
         await approveSellerRequest(id, payload);
         showToast("Solicitud aprobada exitosamente", "success");
         loadRequests();
-      } catch {
+      } catch (error) {
+        console.error("Error al aprobar solicitud:", error);
         showToast("Error al aprobar la solicitud", "error");
       } finally {
         setProcessing(null);
@@ -64,7 +68,8 @@ export const useSellerRequests = () => {
         await denySellerRequest(id, payload);
         showToast("Solicitud denegada", "success");
         loadRequests();
-      } catch {
+      } catch (error) {
+        console.error("Error al denegar solicitud:", error);
         showToast("Error al denegar la solicitud", "error");
       } finally {
         setProcessing(null);

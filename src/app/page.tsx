@@ -8,7 +8,7 @@ import {
 
 export default function HomePage() {
   return (
-    <main className="relative min-h-screen overflow-x-hidden text-white">
+    <main className="relative min-h-dvh overflow-x-hidden text-white">
       <LandingBackground />
 
       <div className="relative z-10">

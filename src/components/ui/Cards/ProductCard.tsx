@@ -1,16 +1,41 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import type { ProductCardProps } from "@/src/types/CardsTypes";
 
 export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (onAddToCart) {
       onAddToCart(product);
     }
   };
+
+  const shopHref = product.id_shop ? `/shops/${product.id_shop}` : null;
+
+  const details = (
+    <>
+      <h2 className="mb-2 text-lg font-bold drop-shadow-md">
+        {product.name_product}
+      </h2>
+
+      <div className="mb-1 flex items-center justify-center gap-2 px-2">
+        <h3 className="rounded-[10px] bg-white/10 px-2.5 py-0.5 text-sm font-bold text-gray-200 backdrop-blur-sm">
+          {product.stock} L
+        </h3>
+        <h3 className="rounded-[10px] bg-white/10 px-2.5 py-0.5 text-sm font-bold text-gray-200 backdrop-blur-sm">
+          ${product.price.toLocaleString("es-CO")}
+        </h3>
+      </div>
+
+      <p className="text-xs text-gray-300">
+        Sold by: <strong className="text-white">{product.shop_name}</strong>
+      </p>
+    </>
+  );
 
   return (
     <motion.article
@@ -22,6 +47,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
         src={product.image_url}
         alt={product.name_product}
         fill
+        loading="lazy"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 20vw"
         unoptimized={product.image_url.startsWith("http")}
         className="absolute inset-0 z-0 object-cover"
@@ -30,22 +56,17 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
       <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/50 to-transparent" />
 
       <div className="relative z-[2] -mb-5 p-1 text-center">
-        <h2 className="mb-2 text-lg font-bold drop-shadow-md">
-          {product.name_product}
-        </h2>
+        {shopHref ? (
+          <Link
+            href={shopHref}
+            className="block rounded-xl no-underline transition-opacity hover:opacity-80"
+          >
+            {details}
+          </Link>
+        ) : (
+          details
+        )}
 
-        <div className="mb-1 flex items-center justify-center gap-2 px-2">
-          <h3 className="rounded-[10px] bg-white/10 px-2.5 py-0.5 text-sm font-bold text-gray-200 backdrop-blur-sm">
-            {product.stock} L
-          </h3>
-          <h3 className="rounded-[10px] bg-white/10 px-2.5 py-0.5 text-sm font-bold text-gray-200 backdrop-blur-sm">
-            ${product.price.toLocaleString("es-CO")}
-          </h3>
-        </div>
-
-        <p className="text-xs text-gray-300">
-          Sold by: <strong className="text-white">{product.shop_name}</strong>
-        </p>
         <div className="flex items-center justify-center gap-2">
           <button
             type="button"

@@ -8,4 +8,6 @@ export interface InputProps {
     className?: string;
     error?: string;
     register?: UseFormRegisterReturn;
+    autoComplete?: string;
+    inputMode?: "text" | "numeric" | "tel" | "email" | "decimal";
 }

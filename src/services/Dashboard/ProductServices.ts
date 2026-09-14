@@ -1,4 +1,4 @@
-import type { Product } from "@/src/types/ProductTypes";
+import type { Product, ProductImage } from "@/src/types/ProductTypes";
 import { apiRequest } from "@/src/services/apiClient";
 
 export interface GetProductsParams {
@@ -106,12 +106,62 @@ export async function createProduct(
   });
 }
 
-export async function createProductWithImage(
+export async function createProductWithImages(
   formData: FormData
 ): Promise<Product> {
   return apiRequest<Product>("/products/upload", {
     method: "POST",
     formData,
+  });
+}
+
+export async function addProductImages(
+  productId: number,
+  files: File[]
+): Promise<ProductImage[]> {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append("images", file);
+  }
+
+  const data = await apiRequest<unknown>(`/products/${productId}/images`, {
+    method: "POST",
+    formData,
+  });
+
+  if (Array.isArray(data)) return data as ProductImage[];
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    if (Array.isArray(obj.images)) return obj.images as ProductImage[];
+    if (Array.isArray(obj.items)) return obj.items as ProductImage[];
+  }
+  return [];
+}
+
+export async function replaceProductImage(
+  imageId: number,
+  file: File
+): Promise<ProductImage> {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const data = await apiRequest<unknown>(`/products/images/${imageId}`, {
+    method: "PUT",
+    formData,
+  });
+
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    if (obj.detail && typeof obj.detail === "object") {
+      return obj.detail as ProductImage;
+    }
+  }
+  return data as ProductImage;
+}
+
+export async function deleteProductImage(imageId: number): Promise<void> {
+  return apiRequest<void>(`/products/images/${imageId}`, {
+    method: "DELETE",
   });
 }
 

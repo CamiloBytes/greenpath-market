@@ -8,7 +8,7 @@ export const HeroSection = () => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="relative flex min-h-screen flex-col justify-center p-0"
+      className="relative flex min-h-dvh flex-col justify-center p-0"
     >
       <div className="relative z-10 max-w-[900px] pr-0 pl-10 mt-[-8rem] sm:pr-[15vw] sm:pl-20 sm:mt-[-13rem]">
         <div className="text-description">
@@ -21,7 +21,7 @@ export const HeroSection = () => {
 
         <div className="text-eslogan">
           <h3 className="mt-4 mb-[-1.5rem] text-left text-[1.6rem] font-semibold leading-[1.1] tracking-[1.2px] sm:text-[4.3rem] bg-gradient-to-r from-[#17AD12] via-[#1DD317] to-[#38ad54] bg-clip-text text-transparent animate-color-flow">
-            From the field to your table<span className="text-[4rem]">„</span>
+            From the field to your table<span className="text-[1.5rem] sm:text-[4rem]">„</span>
           </h3>
         </div>
 
