@@ -33,6 +33,25 @@ const DEFAULT_VALUES: RegisterFormData = {
   address: "",
 };
 
+const FieldGroup = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div
+    role="group"
+    aria-label={title}
+    className="w-full border-t border-white/10 pt-3 flex flex-col gap-2.5 sm:gap-3"
+  >
+    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#1DD317]">
+      {title}
+    </p>
+    {children}
+  </div>
+);
+
 export const RegisterForm = () => {
   const {
     step,
@@ -67,80 +86,104 @@ export const RegisterForm = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col items-center justify-center md:w-8/12"
+        className="flex flex-col items-center justify-center gap-4 w-full max-w-md"
       >
-        <div className="w-full flex flex-col gap-2 justify-start items-start text-white">
-          <h1 className="text-5xl font-bold text-center ">Register</h1>
-          <div className="w-full flex flex-col gap-4 flex-wrap justify-start items-center text-white">
+        <div className="w-full flex flex-col items-center gap-1.5 pb-1 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#1DD317]">
+            República de GreenPath
+          </p>
+          <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-white">
+            Crea tu cuenta
+          </h1>
+          <p className="text-sm text-white/55">
+            Únete al mercado de los productores locales.
+          </p>
+        </div>
+
+        <FieldGroup title="Tus datos">
+          <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <Input
               type="text"
-              placeholder="Full Name"
-              label="Full Name"
+              label="Nombre completo"
+              autoComplete="name"
               {...fieldProps("fullName")}
             />
             <Input
-              type="email"
-              placeholder="Email"
-              label="Email"
-              {...fieldProps("email")}
+              type="date"
+              label="Fecha de nacimiento"
+              {...fieldProps("birthdate")}
             />
-            <Input
-              type="text"
-              placeholder="Phone"
-              label="Phone"
-              {...fieldProps("phone")}
-            />
+          </div>
+        </FieldGroup>
+
+        <FieldGroup title="Tu documento">
+          <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <Select
-              label="ID Type"
+              label="Tipo de documento"
               options={DOCUMENT_TYPES}
               {...fieldProps("idDocumentType")}
             />
             <Input
-              type="date"
-              label="Date of Birth"
-              placeholder="Date of Birth"
-              {...fieldProps("birthdate")}
-            />
-            <Input
               type="text"
-              placeholder="ID Number"
-              label="ID Number"
+              label="Número de documento"
+              inputMode="numeric"
               {...fieldProps("documentNumber")}
             />
+          </div>
+        </FieldGroup>
+
+        <FieldGroup title="Tu contacto">
+          <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <Input
+              type="email"
+              label="Correo electrónico"
+              autoComplete="email"
+              {...fieldProps("email")}
+            />
+            <Input
+              type="tel"
+              label="Teléfono"
+              autoComplete="tel"
+              {...fieldProps("phone")}
+            />
+          </div>
+          <Input
+            type="text"
+            label="Dirección"
+            autoComplete="street-address"
+            {...fieldProps("address")}
+          />
+        </FieldGroup>
+
+        <FieldGroup title="Tu acceso">
+          <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <Input
               type="password"
-              placeholder="Password"
-              label="Password"
+              label="Contraseña"
+              autoComplete="new-password"
               {...fieldProps("password")}
             />
             <Input
               type="password"
-              placeholder="Confirm Password"
-              label="Confirm Password"
+              label="Confirmar contraseña"
+              autoComplete="new-password"
               {...fieldProps("confirmPassword")}
             />
-            <Input
-              type="address"
-              placeholder="Address"
-              label="Address"
-              {...fieldProps("address")}
-            />
-
-            {(errors.root || error) && (
-              <p role="alert" className="text-sm text-red-500">
-                {errors.root?.message ?? error}
-              </p>
-            )}
-
-            <Button
-              type="submit"
-              disabled={loading}
-              className="mt-10 w-1/2 transform hover:scale-105 transition duration-300"
-            >
-              {loading ? "Signing up..." : "Sign Up"}
-            </Button>
           </div>
-        </div>
+
+          {(errors.root || error) && (
+            <div
+              role="alert"
+              className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-300"
+            >
+              {errors.root?.message ?? error}
+            </div>
+          )}
+
+          <Button type="submit" disabled={loading} className="mt-1 w-full">
+            {loading ? "Creando cuenta…" : "Crear cuenta"}
+          </Button>
+        </FieldGroup>
       </form>
 
       <VerificationModal

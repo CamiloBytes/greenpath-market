@@ -12,6 +12,8 @@ export const CartPage = () => {
     cartTotal,
     updateQuantity,
     removeFromCart,
+    unavailableIds,
+    hasUnavailable,
     selectedMethod,
     setSelectedMethod,
     checkingOut,
@@ -54,6 +56,7 @@ export const CartPage = () => {
         <AnimatePresence>
           {cart.map((item) => {
             const itemTotal = item.price * item.quantity;
+            const unavailable = unavailableIds.has(item.id_product);
             return (
               <motion.div
                 key={item.id_product}
@@ -61,9 +64,20 @@ export const CartPage = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: 50 }}
-                className="flex items-center gap-4 rounded-2xl bg-white/5 p-4"
+                className={`relative flex items-center gap-4 rounded-2xl p-4 ${
+                  unavailable ? "bg-red-950/40" : "bg-white/5"
+                }`}
               >
-                <div className="relative h-[60px] w-[60px] shrink-0 overflow-hidden rounded-xl">
+                {unavailable && (
+                  <span className="absolute right-3 top-3 rounded-full border border-red-400/40 bg-red-500/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-red-300">
+                    No disponible
+                  </span>
+                )}
+                <div
+                  className={`relative h-[60px] w-[60px] shrink-0 overflow-hidden rounded-xl ${
+                    unavailable ? "opacity-40" : ""
+                  }`}
+                >
                   <Image
                     src={item.image_url}
                     alt={item.name_product}
@@ -74,12 +88,24 @@ export const CartPage = () => {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h4 className="truncate text-sm font-bold text-white">
+                  <h4
+                    className={`truncate text-sm font-bold ${
+                      unavailable ? "text-red-300" : "text-white"
+                    }`}
+                  >
                     {item.name_product}
                   </h4>
                   <p className="text-xs text-gray-300">
-                    Precio: ${item.price.toLocaleString("es-CO")}
+                    Precio: $
+                    {item.price.toLocaleString("es-CO")}
                   </p>
+
+                  {unavailable && (
+                    <p className="mt-1.5 text-xs text-red-300">
+                      La tienda de este producto fue desactivada o eliminada.
+                      Elimínalo para continuar al pago.
+                    </p>
+                  )}
 
                   <div className="mt-1.5 flex items-center gap-3">
                     <div className="flex items-center gap-2">
@@ -87,7 +113,9 @@ export const CartPage = () => {
                         onClick={() =>
                           updateQuantity(item.id_product, item.quantity - 1)
                         }
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                        disabled={unavailable}
+                        aria-label="Disminuir cantidad"
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors disabled:opacity-40"
                       >
                         −
                       </button>
@@ -98,7 +126,9 @@ export const CartPage = () => {
                         onClick={() =>
                           updateQuantity(item.id_product, item.quantity + 1)
                         }
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                        disabled={unavailable}
+                        aria-label="Aumentar cantidad"
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors disabled:opacity-40"
                       >
                         +
                       </button>
@@ -113,7 +143,7 @@ export const CartPage = () => {
                 <button
                   onClick={() => removeFromCart(item.id_product)}
                   aria-label="Eliminar"
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-500/80 text-lg text-white hover:bg-red-500 transition-colors"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-500/80 text-xl text-white hover:bg-red-500 transition-colors"
                 >
                   ×
                 </button>
@@ -169,9 +199,14 @@ export const CartPage = () => {
         </div>
 
         <div className="mt-6 text-center">
+          {hasUnavailable && (
+            <p className="mb-4 text-sm font-semibold text-red-300">
+              Elimina los productos no disponibles para poder realizar el pago.
+            </p>
+          )}
           <button
             onClick={handleCheckout}
-            disabled={!selectedMethod || checkingOut}
+            disabled={!selectedMethod || hasUnavailable || checkingOut || cart.length === 0}
             className="rounded-full bg-gradient-to-r from-[#284827] to-[#1DD317] px-10 py-3.5 font-bold text-white transition-all duration-300 hover:shadow-[0_8px_20px_rgba(23,173,18,0.26)] disabled:cursor-not-allowed disabled:bg-gray-500 disabled:shadow-none"
           >
             {checkingOut ? "Procesando pago..." : "Proceder al pago"}

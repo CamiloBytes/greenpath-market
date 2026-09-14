@@ -5,15 +5,16 @@ import { FiLogOut, FiShoppingCart } from "react-icons/fi";
 import { IoMdPerson } from "react-icons/io";
 import { FaShop, FaUserTie } from "react-icons/fa6";
 import { GiGreenhouse } from "react-icons/gi";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/AuthContext";
-import { useCart } from "@/src/context/CartContext";
+import { useAuthStore } from "@/src/stores/authStore";
+import { useCartStore } from "@/src/stores/cartStore";
 import { SearchInput } from "../../ui/Input";
 import { motion, AnimatePresence } from "framer-motion";
 
 const iconButton =
-  "text-2xl text-white/90 hover:text-[#1DD317] transition-colors duration-200 cursor-pointer";
+  "inline-flex h-11 w-11 items-center justify-center text-2xl text-white/90 hover:text-[#1DD317] transition-colors duration-200 cursor-pointer";
 
 const NAV_LINKS = [
   { href: "/admin", label: "Admin", icon: <FaUserTie /> },
@@ -22,8 +23,8 @@ const NAV_LINKS = [
 
 export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => {
   const router = useRouter();
-  const { user, loading, logout } = useAuth();
-  const { cartCount } = useCart();
+  const { user, loading, logout } = useAuthStore();
+  const { cartCount } = useCartStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -57,7 +58,7 @@ export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => 
     <header className="fixed top-0 inset-x-0 z-50">
       <nav className="bg-gradient-to-r from-[#07110C]/80 via-[#07110C]/65 to-[#0A1A12]/70 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-white">
+          <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 text-white">
             <GiGreenhouse className="text-3xl text-[#1DD317]" />
             <span className="text-xl font-bold tracking-tight">GreenPath</span>
           </Link>
@@ -97,7 +98,19 @@ export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => 
             </Link>
 
             <div className="flex items-center gap-2 text-white">
-              <IoMdPerson className="text-xl" />
+              {user?.avatar_url ? (
+                <Image
+                  src={user.avatar_url}
+                  alt={user.full_name ?? "Foto de perfil"}
+                  width={28}
+                  height={28}
+                  loading="lazy"
+                  unoptimized={user.avatar_url.startsWith("http")}
+                  className="h-7 w-7 rounded-full object-cover"
+                />
+              ) : (
+                <IoMdPerson className="text-xl" />
+              )}
               {loading ? (
                 <span className="text-sm text-white/70">Cargando...</span>
               ) : user?.email ? (
@@ -145,7 +158,7 @@ export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => 
               type="button"
               aria-label="Menú"
               onClick={() => setMobileOpen((prev) => !prev)}
-              className="flex flex-col items-center justify-center gap-[5px] p-2"
+              className="flex h-11 w-11 flex-col items-center justify-center gap-[5px]"
             >
               <span
                 className={`h-[2px] w-6 bg-white transition-all duration-300 ${mobileOpen ? "translate-y-[7px] rotate-45" : ""}`}
@@ -184,7 +197,7 @@ export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => 
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10 hover:text-[#1DD317] transition-colors"
+                  className="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/90 hover:bg-white/10 hover:text-[#1DD317] transition-colors"
                 >
                   <span className="text-lg">{link.icon}</span>
                   {link.label}
@@ -195,7 +208,7 @@ export const Navbar = ({ onSearch }: { onSearch?: (value: string) => void }) => 
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors text-left"
+                  className="mt-1 flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors text-left"
                 >
                   <FiLogOut className="text-lg" />
                   Logout

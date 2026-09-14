@@ -27,6 +27,7 @@ export const ProductItemCard = ({
           src={product.image_url}
           alt={product.name_product}
           fill
+          loading="lazy"
           unoptimized={product.image_url.startsWith("http")}
           className="absolute inset-0 object-cover"
         />
@@ -51,13 +52,13 @@ export const ProductItemCard = ({
         <div className="mt-3 flex items-center justify-center gap-2">
           <button
             onClick={() => onEdit(product)}
-            className="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold backdrop-blur-md transition-colors hover:bg-white/25"
+            className="min-h-11 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold backdrop-blur-md transition-colors hover:bg-white/25"
           >
             Editar
           </button>
           <button
             onClick={() => onDelete(product)}
-            className="rounded-full bg-red-500/20 px-5 py-2 text-sm font-semibold backdrop-blur-md transition-colors hover:bg-red-500/40"
+            className="min-h-11 rounded-full bg-red-500/20 px-5 py-2 text-sm font-semibold backdrop-blur-md transition-colors hover:bg-red-500/40"
           >
             Eliminar
           </button>

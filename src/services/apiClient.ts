@@ -1,6 +1,13 @@
 export const TOKEN_KEY = "access_token";
 export const UNAUTHORIZED_EVENT = "auth:unauthorized";
 
+export class UnauthorizedError extends Error {
+  constructor(message = "Tu sesión ha expirado") {
+    super(message);
+    this.name = "UnauthorizedError";
+  }
+}
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export function getToken(): string | null {
@@ -66,6 +73,7 @@ export async function apiRequest<T>(
     if (response.status === 401 && auth) {
       clearToken();
       window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+      throw new UnauthorizedError(await parseErrorMessage(response));
     }
     throw new Error(await parseErrorMessage(response));
   }

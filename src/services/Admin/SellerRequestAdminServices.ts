@@ -25,6 +25,7 @@ export async function getSellerRequests({
     if (Array.isArray(obj.detail)) return obj.detail as SellerRequest[];
     if (Array.isArray(obj.items)) return obj.items as SellerRequest[];
     if (Array.isArray(obj.data)) return obj.data as SellerRequest[];
+    if (Array.isArray(obj.requests)) return obj.requests as SellerRequest[];
   }
   return [];
 }

@@ -3,13 +3,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { GiMonsteraLeaf } from "react-icons/gi";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { banners } from "@/src/data/banners";
 
 const SLIDE_DURATION = 6000;
 
 export default function BannerCarousel() {
   const [current, setCurrent] = useState(0);
+  const touchStart = useRef<number | null>(null);
+  const touchDelta = useRef(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,17 +21,44 @@ export default function BannerCarousel() {
     return () => clearInterval(interval);
   }, []);
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrent((prev) => (prev + 1) % banners.length);
+  }, []);
+
+  const previousSlide = useCallback(() => {
+    setCurrent((prev) => (prev - 1 + banners.length) % banners.length);
+  }, []);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStart.current = e.touches[0].clientX;
+    touchDelta.current = 0;
   };
 
-  const previousSlide = () => {
-    setCurrent((prev) => (prev - 1 + banners.length) % banners.length);
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStart.current === null) return;
+    touchDelta.current = e.touches[0].clientX - touchStart.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart.current === null) return;
+    const threshold = 50;
+    if (touchDelta.current > threshold) {
+      previousSlide();
+    } else if (touchDelta.current < -threshold) {
+      nextSlide();
+    }
+    touchStart.current = null;
+    touchDelta.current = 0;
   };
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl bg-[#07110C] shadow-2xl shadow-black/40">
-      <div className="relative h-72 w-full md:h-[28rem]">
+    <div
+      className="relative w-full overflow-hidden rounded-2xl bg-[#07110C] shadow-2xl shadow-black/40"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div className="relative h-64 w-full sm:h-72 md:h-[28rem]">
         <AnimatePresence initial={false}>
           <motion.div
             key={banners[current].id}
@@ -66,16 +95,16 @@ export default function BannerCarousel() {
               </motion.div>
             ))}
 
-            <div className="relative z-10 flex h-full items-center px-8 md:px-16">
-              <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-2">
+            <div className="relative z-10 flex h-full items-center px-4 sm:px-8 md:px-16">
+              <div className="grid w-full grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-8">
                 <div className="text-white">
                   <motion.span
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15, duration: 0.5, ease: "easeOut" }}
-                    className="inline-flex items-center gap-2 rounded-full border border-[#1DD317]/40 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#3BF533] backdrop-blur-sm"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[#1DD317]/40 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-[#3BF533] backdrop-blur-sm sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs"
                   >
-                    <GiMonsteraLeaf className="text-sm" />
+                    <GiMonsteraLeaf className="text-xs sm:text-sm" />
                     {banners[current].badge}
                   </motion.span>
 
@@ -83,7 +112,7 @@ export default function BannerCarousel() {
                     initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.55, ease: "easeOut" }}
-                    className="mt-4 text-3xl font-extrabold leading-tight md:text-5xl"
+                    className="mt-3 text-2xl font-extrabold leading-tight sm:mt-4 sm:text-3xl md:text-5xl"
                   >
                     {banners[current].title}
                   </motion.h2>
@@ -92,7 +121,7 @@ export default function BannerCarousel() {
                     initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.45, duration: 0.55, ease: "easeOut" }}
-                    className="mt-3 max-w-md text-sm text-white/70 md:text-base"
+                    className="mt-2 max-w-md text-xs text-white/70 sm:mt-3 sm:text-sm md:text-base"
                   >
                     {banners[current].description}
                   </motion.p>
@@ -104,7 +133,7 @@ export default function BannerCarousel() {
                     whileTap={{ scale: 0.95 }}
                     transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
                     type="button"
-                    className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#1DD317] px-6 py-3 text-sm font-bold text-[#07110C] shadow-lg shadow-[#1DD317]/30 transition-colors hover:bg-[#3BF533]"
+                    className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#1DD317] px-5 py-2.5 text-xs font-bold text-[#07110C] shadow-lg shadow-[#1DD317]/30 transition-colors hover:bg-[#3BF533] sm:mt-7 sm:px-6 sm:py-3 sm:text-sm"
                   >
                     {banners[current].cta}
                     <span aria-hidden>→</span>
@@ -145,7 +174,7 @@ export default function BannerCarousel() {
         whileHover={{ scale: 1.1, x: -3 }}
         whileTap={{ scale: 0.9 }}
         transition={{ type: "spring", stiffness: 400, damping: 20 }}
-        className="absolute left-4 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-lg text-white backdrop-blur-md transition-colors hover:bg-[#1DD317] hover:text-[#07110C]"
+        className="absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg text-white backdrop-blur-md transition-colors hover:bg-[#1DD317] hover:text-[#07110C] md:flex md:h-11 md:w-11"
       >
         ←
       </motion.button>
@@ -157,20 +186,20 @@ export default function BannerCarousel() {
         whileHover={{ scale: 1.1, x: 3 }}
         whileTap={{ scale: 0.9 }}
         transition={{ type: "spring", stiffness: 400, damping: 20 }}
-        className="absolute right-4 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-lg text-white backdrop-blur-md transition-colors hover:bg-[#1DD317] hover:text-[#07110C]"
+        className="absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-lg text-white backdrop-blur-md transition-colors hover:bg-[#1DD317] hover:text-[#07110C] md:flex md:h-11 md:w-11"
       >
         →
       </motion.button>
 
-      <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
+      <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 sm:bottom-4">
         {banners.map((banner, index) => (
           <button
             key={banner.id}
             type="button"
             aria-label={`Ir a la diapositiva ${index + 1}`}
             onClick={() => setCurrent(index)}
-            className="relative h-2.5 overflow-hidden rounded-full"
-            style={{ width: index === current ? 32 : 10 }}
+            className="relative h-2 overflow-hidden rounded-full transition-all duration-300"
+            style={{ width: index === current ? 28 : 8 }}
           >
             <span className="absolute inset-0 rounded-full bg-white/40 transition-colors" />
             {index === current && (

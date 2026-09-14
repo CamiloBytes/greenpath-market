@@ -1,4 +1,5 @@
 import { apiRequest } from "@/src/services/apiClient";
+import { uploadImage } from "@/src/services/uploads/UploadService";
 import type { SellerRequest, SellerRequestPayload } from "@/src/types/SellerRequestTypes";
 
 export async function createSellerRequest(data: SellerRequestPayload): Promise<SellerRequest> {
@@ -14,4 +15,9 @@ export async function getMySellerRequest(): Promise<SellerRequest | null> {
   } catch {
     return null;
   }
+}
+
+/** Sube el logo de la tienda mediante el endpoint genérico de imágenes. */
+export async function uploadSellerRequestLogo(file: File): Promise<string> {
+  return uploadImage(file, "logo");
 }

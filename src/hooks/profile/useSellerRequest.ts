@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useToast } from "@/src/context/ToastContext";
+import { useToastStore } from "@/src/stores/toastStore";
 import {
   createSellerRequest,
   getMySellerRequest,
@@ -10,7 +10,7 @@ import type {
 } from "@/src/types/SellerRequestTypes";
 
 export const useSellerRequest = () => {
-  const { showToast } = useToast();
+  const { showToast } = useToastStore();
   const [request, setRequest] = useState<SellerRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
