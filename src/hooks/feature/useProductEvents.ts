@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { Product } from "@/src/types/ProductTypes";
+import { API_URL } from "@/src/services/apiClient";
 
 export type ProductEventType = "created" | "updated" | "deleted";
 
@@ -29,7 +30,7 @@ export const useProductEvents = ({
 
   useEffect(() => {
     const source = new EventSource(
-      `${process.env.API_URL}/products/stream`
+      `${API_URL}/products/stream`
     );
 
     source.onmessage = (event) => {
