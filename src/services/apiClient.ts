@@ -63,7 +63,8 @@ export async function apiRequest<T>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}/${path}`, {
+  const url = `${API_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+  const response = await fetch(url, {
     method,
     headers,
     body: formData ?? (body ? JSON.stringify(body) : undefined),
