@@ -93,7 +93,7 @@ export function toRegisterApiPayload(data: RegisterFormPayload): RegisterApiPayl
 }
 
 export async function loginUser(email: string, password: string): Promise<LoginResponse> {
-  return apiRequest<LoginResponse>("login/", {
+  return apiRequest<LoginResponse>("/login/", {
     method: "POST",
     auth: false,
     body: { email, password },
