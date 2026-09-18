@@ -8,7 +8,7 @@ export class UnauthorizedError extends Error {
   }
 }
 
-export const API_URL = process.env.API_URL;
+export const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") ?? "";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -63,7 +63,7 @@ export async function apiRequest<T>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
+  const response = await fetch(`${API_URL}/${path}`, {
     method,
     headers,
     body: formData ?? (body ? JSON.stringify(body) : undefined),
